@@ -26,11 +26,10 @@ It also requires touch screen.
 <br>
 #include "font_Arial.h" 
 <br>
-#include <ILI9341_t3_Controls.h> // required for the example only
+#include "ILI9341_t3_Controls.h" // required for the example only
 <br>
-#include <ILI9341_t3_Keypad.h>
-<br>
-#include <XPT2046_Touchscreen.h>
+#include "ILI9341_t3_Keypad.h"
+#include "XPT2046_Touchscreen.h"
 <br>
 <br>
 2. create a display object
