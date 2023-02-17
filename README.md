@@ -112,7 +112,6 @@ the data property is a char
 ![header image](https://raw.github.com/KrisKasprzak/ILI9341_t3_Keypad/master/Images/16.jpg)
 ![header image](https://raw.github.com/KrisKasprzak/ILI9341_t3_Keypad/master/Images/18.jpg)
 ![header image](https://raw.github.com/KrisKasprzak/ILI9341_t3_Keypad/master/Images/20.jpg)
-![header image](https://raw.github.com/KrisKasprzak/ILI9341_t3_Keypad/master/Images/22.jpg)
 ![header image](https://raw.github.com/KrisKasprzak/ILI9341_t3_Keypad/master/Images/23.jpg)
 ![header image](https://raw.github.com/KrisKasprzak/ILI9341_t3_Keypad/master/Images/25.jpg)
 ![header image](https://raw.github.com/KrisKasprzak/ILI9341_t3_Keypad/master/Images/27.jpg)
