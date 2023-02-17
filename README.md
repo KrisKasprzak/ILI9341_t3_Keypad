@@ -35,13 +35,13 @@ This library includes 2 classes for getting user input using a 0-9 digit number 
 <br>
 3. create a touch object
 <br>
-4. create the keyboard and or numberpad object
+4. create the keyboard and / or numberpad object
 <br>
 NumberPad MyNumberPad(&Display, &Touch);
 Keyboard MyKeyboard(&Display, &Touch);
 <br>
 <br>
-5. In setup, initialize the objects, 6. and optionally specify any options
+5. In setup, initialize the objects, and optionally specify any options
 <br>
 MyNumberPad.init(ILI9341_BLACK, ILI9341_WHITE, ILI9341_BLUE, ILI9341_NAVY, ILI9341_WHITE, ILI9341_CYAN, ILI9341_YELLOW, FONT_BUTTON);
 <br>
@@ -72,17 +72,17 @@ _  <br>
   <br>
 <br>
 
-5. When ready get user input
+6. When ready get user input
 <br>
-MyNumberPad.getInput();
+MyNumberPad.getInput(); // this will display the key pad control
 <br>
 or
 <br>
 <br>
-MyKeyboard.getInput();
+MyKeyboard.getInput(); // this will display the key pad control
 <br>
 <br>
-6. Once the user completes input, read the results
+7. Once the user completes input, read the results
 <br>
 Serial.println(MyNumberPad.value);
 <br>
