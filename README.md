@@ -1,8 +1,5 @@
 # Keyboard
-
-This library includes 2 classes for getting user input using a 0-9 digit number pad and a full keyboard. This library is for the ILI9341_t3 driver to drive common 2.8" LCF displays. 
-It also requires touch screen. 
-
+This library includes 2 classes for getting user input using a 0-9 digit number pad and a full keyboard. This library is for the ILI9341_t3 driver to drive common 2.8" LCF displays. It also requires touch screen. 
 <br>
 <b><h3>Library highlights</b></h3>
 1. Simple to implement library
@@ -100,12 +97,6 @@ the data property is a char
 <br>
 
 
-<b><h3>ToDo...</b></h3>
-1. test more
-2. document the examples and code
-3. Add and example on how to read data and write to and SD card)
-5. create YouTube vid in how to use
-6. test with other chips
-7. remove hard code for chip size, pages, etc.
+![header image](https://raw.github.com/KrisKasprzak/Keyboard/master/Images/01.jpg)
 
 
