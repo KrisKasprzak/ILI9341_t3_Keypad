@@ -52,15 +52,26 @@ MyNumberPad.init(ILI9341_BLACK, ILI9341_WHITE, ILI9341_BLUE, ILI9341_NAVY, ILI93
   // MyNumberPad.enableNegative(bool State); // disable / enable negative sign (enabled by default)
   <br>
   // MyNumberPad.setMinMax(float MininumValue, float MaximumValue); // want bound checks?
+  <br>
   // use the value property to set the initial value if desired
+  <br>
   // MyNumberPad.value = 3.14159;
+  <br>
+  <br>
 MyKeyboard.init(ILI9341_BLACK, ILI9341_WHITE, ILI9341_BLUE, ILI9341_NAVY, ILI9341_WHITE, ILI9341_CYAN, ILI9341_YELLOW, FONT_BUTTON);
+<br>
   // MyKeyboard.setDisplayColor(uint16_t TextColor, uint16_t BackColor); change colors
+  <br>
   // MyKeyboard.hideInput(); // for expanded password input
+_  <br>
   // MyKeyboard.setInitialText(const char *Text); // maybe show and ip address format
+  <br>
   // MyKeyboard.setInitialText("IP 111.222.333.444");
+  <br>
   // optional to populate the input box
+  <br>
   // strcpy(MyKeyboard.data, "TEXT");
+  <br>
 <br>
 
 5. When ready get user input
