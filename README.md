@@ -77,17 +77,27 @@ _  <br>
 5. When ready get user input
 <br>
 MyNumberPad.getInput();
+<br>
 or
+<br>
+<br>
 MyKeyboard.getInput();
+<br>
 <br>
 6. Once the user completes input, read the results
 <br>
 Serial.println(MyNumberPad.value);
+<br>
 note that the data type is a float so you will need to recast if an int is desired
+<br>
 Serial.println((int) MyNumberPad.value);
+<br>
 or
+<br>
 Serial.println(MyKeyboard.data);
+<br>
 the data property is a char
+<br>
 
 
 <b><h3>ToDo...</b></h3>
