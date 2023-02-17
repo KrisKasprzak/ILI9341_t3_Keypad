@@ -95,8 +95,24 @@ Serial.println(MyKeyboard.data);
 <br>
 the data property is a char
 <br>
-
-
+<br>
+<b><h3>Example Screenshots</b></h3>
+<br>
+<br>
 ![header image](https://raw.github.com/KrisKasprzak/Keyboard/master/Images/01.jpg)
+![header image](https://raw.github.com/KrisKasprzak/Keyboard/master/Images/03.jpg)
+![header image](https://raw.github.com/KrisKasprzak/Keyboard/master/Images/05.jpg)
+![header image](https://raw.github.com/KrisKasprzak/Keyboard/master/Images/07.jpg)
+![header image](https://raw.github.com/KrisKasprzak/Keyboard/master/Images/08.jpg)
+![header image](https://raw.github.com/KrisKasprzak/Keyboard/master/Images/09.jpg)
+![header image](https://raw.github.com/KrisKasprzak/Keyboard/master/Images/12.jpg)
+![header image](https://raw.github.com/KrisKasprzak/Keyboard/master/Images/14.jpg)
+![header image](https://raw.github.com/KrisKasprzak/Keyboard/master/Images/16.jpg)
+![header image](https://raw.github.com/KrisKasprzak/Keyboard/master/Images/18.jpg)
+![header image](https://raw.github.com/KrisKasprzak/Keyboard/master/Images/20.jpg)
+![header image](https://raw.github.com/KrisKasprzak/Keyboard/master/Images/22.jpg)
+![header image](https://raw.github.com/KrisKasprzak/Keyboard/master/Images/23.jpg)
+![header image](https://raw.github.com/KrisKasprzak/Keyboard/master/Images/25.jpg)
+![header image](https://raw.github.com/KrisKasprzak/Keyboard/master/Images/27.jpg)
 
 
