@@ -1,5 +1,5 @@
 # Keyboard
-This library includes 2 classes for getting user input using a 0-9 digit number pad and a full keyboard. This library is for the ILI9341_t3 driver to drive common 2.8" LCF displays. It also requires touch screen. 
+This library includes 2 classes for getting user input using a 0-9 digit number pad and a full keyboard. This library is for the ILI9341_t3 driver to drive common 2.8" LCF displays, and also requires touch screen capability.  This library is dependent on the ILI9341_t3 and the XPT2046_Touchscreen libraries.
 <br>
 <b><h3>Library highlights</b></h3>
 1. Simple to implement library
@@ -12,6 +12,7 @@ This library includes 2 classes for getting user input using a 0-9 digit number 
 8. Both classes can allow initial instruction text in the input field
 9. Both classes can allow a predefined input 
 10. The number input can handle decimal and negative number inputs and can enable or disabled
+11. The library handles button presses, hence why you pass in the Touch object
 
 <b><h3>General implementation</b></h3>
 <br>
