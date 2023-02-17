@@ -29,6 +29,7 @@ It also requires touch screen.
 #include "ILI9341_t3_Controls.h" // required for the example only
 <br>
 #include "ILI9341_t3_Keypad.h"
+<br>
 #include "XPT2046_Touchscreen.h"
 <br>
 <br>
@@ -45,8 +46,11 @@ Keyboard MyKeyboard(&Display, &Touch);
 5. In setup, initialize the objects, 6. and optionally specify any options
 <br>
 MyNumberPad.init(ILI9341_BLACK, ILI9341_WHITE, ILI9341_BLUE, ILI9341_NAVY, ILI9341_WHITE, ILI9341_CYAN, ILI9341_YELLOW, FONT_BUTTON);
+<br>
   // MyNumberPad.enableDecimal(bool State); // disable / enable decimal point (enabled by default)
+  <br>
   // MyNumberPad.enableNegative(bool State); // disable / enable negative sign (enabled by default)
+  <br>
   // MyNumberPad.setMinMax(float MininumValue, float MaximumValue); // want bound checks?
   // use the value property to set the initial value if desired
   // MyNumberPad.value = 3.14159;
