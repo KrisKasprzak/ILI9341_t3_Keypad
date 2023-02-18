@@ -251,7 +251,7 @@ void NumberPad::getInput() {
 	d->print(dn);
   }
   
-  for (i = 0; i < 14; i++) {
+  for (i = 0; i <= 14; i++) {
     NumberPadBtn[i].setCornerRadius(3);
   }
   NumberPadBtn[0].draw();
@@ -560,19 +560,15 @@ void Keyboard::getInput() {
   KeyboardBtn[76].init(COL8, ROW4, BTNS, BTNS, rcolor, bcolor, tcolor, kcolor, "m", 0, 0, bfont);
   
   
-  KeyboardBtn[97].init(COL5 + (BTNS /2 ), ROW5, BTNS * 4, BTNS, rcolor, bcolor, tcolor, kcolor, "Space", 0, 0, bfont);
-  KeyboardBtn[96].init(COL9, ROW5, BTNS * 3, BTNS, rcolor, bcolor, tcolor, kcolor, "Caps", 0, 0, bfont);
-
-  KeyboardBtn[98].init(COL2, ROW5, BTNS * 3, BTNS, rcolor, bcolor, tcolor, kcolor, "$%", 0, 0, bfont);
-  
-  KeyboardBtn[99].init(COL9, BTNM + (BTNS/2), BTNS * 3, BTNS, rcolor, bcolor, tcolor, kcolor, "Back", 0, 0, bfont);
-  
-  KeyboardBtn[94].init(COL3 + (BTNS / 2), ROW6, BTNS * 4, BTNS * 1.2, rcolor, bcolor, tcolor, kcolor, "Done", 0, 0, bfont);
-  KeyboardBtn[100].init(COL7 + (BTNS / 2), ROW6, BTNS * 4, BTNS * 1.2, rcolor, bcolor, tcolor, kcolor, "Cancel", 0, 0, bfont);
+  KeyboardBtn[94].init(COL5 + (BTNS /2 ), ROW5, BTNS * 4, BTNS, rcolor, bcolor, tcolor, kcolor, "Space", 0, 0, bfont);
+  KeyboardBtn[95].init(COL9, ROW5, BTNS * 3, BTNS, rcolor, bcolor, tcolor, kcolor, "Caps", 0, 0, bfont);
+  KeyboardBtn[96].init(COL2, ROW5, BTNS * 3, BTNS, rcolor, bcolor, tcolor, kcolor, "$%", 0, 0, bfont);
+  KeyboardBtn[97].init(COL9, BTNM + (BTNS/2), BTNS * 3, BTNS, rcolor, bcolor, tcolor, kcolor, "Back", 0, 0, bfont);
+  KeyboardBtn[98].init(COL3 + (BTNS / 2), ROW6, BTNS * 4, BTNS * 1.2, rcolor, bcolor, tcolor, kcolor, "Done", 0, 0, bfont);
+  KeyboardBtn[99].init(COL7 + (BTNS / 2), ROW6, BTNS * 4, BTNS * 1.2, rcolor, bcolor, tcolor, kcolor, "Cancel", 0, 0, bfont);
   
   d->fillScreen(kcolor);
-  
-  
+    
   d->fillRect(BTNM * 2, BTNM * 2, BTNM + (BTNS * 7), 30, inputb);
   d->setCursor(BTNM + 5, BTNM + 5);
   d->setFont(bfont);
@@ -585,16 +581,17 @@ void Keyboard::getInput() {
 		d->print(dn);
 	}
 	
-  for (i = 0; i <= 100; i++) {
+  for (i = 0; i <= 99; i++) {
     KeyboardBtn[i].setCornerRadius(3);
   }
   
+
   KeyboardBtn[94].draw();
+  KeyboardBtn[95].draw();
   KeyboardBtn[96].draw();
   KeyboardBtn[97].draw();
   KeyboardBtn[98].draw();
   KeyboardBtn[99].draw();
-  KeyboardBtn[100].draw();
   //hide number special characters
 
   KeyboardBtn[0].hide();
@@ -653,8 +650,8 @@ void Keyboard::getInput() {
       for (b = 0; b <= 100; b++) {
         if (ProcessButtonPress(KeyboardBtn[b])) {
 			
+          if (b == 95){
 
-          if (b == 96){
             CapsLock = !CapsLock;
             KeyboardBtn[63].hide();
             KeyboardBtn[93].hide();
@@ -680,10 +677,10 @@ void Keyboard::getInput() {
             KeyboardBtn[30].hide();
 			
             if (CapsLock) {
-			  KeyboardBtn[96].setColors(rcolor, rcolor, tcolor, kcolor, kcolor, kcolor);
+			  KeyboardBtn[95].setColors(rcolor, rcolor, tcolor, kcolor, kcolor, kcolor);
+              KeyboardBtn[95].draw();
+			  KeyboardBtn[96].setColors(rcolor, bcolor, tcolor, kcolor, kcolor, kcolor);
               KeyboardBtn[96].draw();
-			  KeyboardBtn[98].setColors(rcolor, bcolor, tcolor, kcolor, kcolor, kcolor);
-              KeyboardBtn[98].draw();
               //hide numbers
               for (i = 15; i < 25; i++) {
                 KeyboardBtn[i].hide();
@@ -708,10 +705,10 @@ void Keyboard::getInput() {
                 KeyboardBtn[i].show();
               }
             } else {
+			  KeyboardBtn[95].setColors(rcolor, bcolor, tcolor, kcolor, kcolor, kcolor);
+              KeyboardBtn[95].draw();
 			  KeyboardBtn[96].setColors(rcolor, bcolor, tcolor, kcolor, kcolor, kcolor);
               KeyboardBtn[96].draw();
-			  KeyboardBtn[98].setColors(rcolor, bcolor, tcolor, kcolor, kcolor, kcolor);
-              KeyboardBtn[98].draw();
               // hide number special characters
               KeyboardBtn[0].hide();
               KeyboardBtn[31].hide();
@@ -740,11 +737,14 @@ void Keyboard::getInput() {
             }
             break;
           }
-          if (b == 98) {
+          if (b == 96) {
+
             SpecialChar = !SpecialChar;
             if (SpecialChar) {
-			  KeyboardBtn[98].setColors(rcolor, rcolor, tcolor, kcolor, kcolor, kcolor);
-              KeyboardBtn[98].draw();
+		
+			  KeyboardBtn[96].setColors(rcolor, rcolor, tcolor, kcolor, kcolor, kcolor);
+		      KeyboardBtn[96].draw();
+			  
               //hide everything but special characters
               if (CapsLock) {
                 //hide upper case
@@ -786,14 +786,19 @@ void Keyboard::getInput() {
                 KeyboardBtn[14].show();
                 KeyboardBtn[30].show();
               } else {
+				  
+				 
                 //show numbers
                 for (i = 15; i < 25; i++) {
                   KeyboardBtn[i].show();
+				  
                 }
+				
                 // hide lower case
                 for (i = 64; i < 90; i++) {
                   KeyboardBtn[i].hide();
                 }
+				
                 // show number special characters
                 KeyboardBtn[0].show();
                 KeyboardBtn[1].show();
@@ -831,8 +836,8 @@ void Keyboard::getInput() {
                 KeyboardBtn[30].show();
               }
             } else {
-			  KeyboardBtn[98].setColors(rcolor, bcolor, tcolor, kcolor, kcolor, kcolor);
-              KeyboardBtn[98].draw();
+			  KeyboardBtn[96].setColors(rcolor, bcolor, tcolor, kcolor, kcolor, kcolor);
+              KeyboardBtn[96].draw();
               // hide no matter what
               KeyboardBtn[63].hide();
               KeyboardBtn[93].hide();
@@ -910,14 +915,14 @@ void Keyboard::getInput() {
 			 
             break;
           }
-          else if (b == 97) {
+          else if (b == 94) {
             // space 
 			dn[np] = ' ';
 			hc[np] = ' ';
             np++;
             break;
           }
-          else if (b == 99) {
+          else if (b == 97) {
             // back space 
 			if (np > 0) {
               --np;
@@ -927,14 +932,14 @@ void Keyboard::getInput() {
             }
             break;
           }
-          else if (b == 94) {
+          else if (b == 98) {
             // done
 			
 			strcpy(data, dn);
             KeepIn = false;
 			break;
           }
-          else if (b == 100) {
+          else if (b == 99) {
             // cancel, just get the heck out
             KeepIn = false;
 			break;
