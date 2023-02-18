@@ -30,8 +30,6 @@ https://youtu.be/PrSxA_QEzuk
 <br>
 1. include the library
 <br>
-#include "Keypad.h"
-<br>
 #include "ILI9341_t3.h"  
 <br>
 #include "font_Arial.h" 
