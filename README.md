@@ -108,10 +108,9 @@ the data property is a char
 If your touch screen is not being mapped to where you pressed you will probably need to adjust the screen mapping in the .cpp file. This mapping is used to account for touch difference in displays. There is a mapping function for both classes. Once you tweak one, the same map can be used for the other.
 
 <br>
-    BtnX = map(p.x, 3975, 169, 0, 320);
-    BtnY = map(p.y, 3850, 304, 0, 240);
-    
-    
+BtnX = map(p.x, 3975, 169, 0, 320);
+<br>
+BtnY = map(p.y, 3850, 304, 0, 240);    
 <br>
 <b><h3>Example Screenshots</b></h3>
 <br>
