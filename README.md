@@ -4,6 +4,9 @@ This library includes 2 classes for getting user input using a 0-9 digit number 
 ![header image](https://raw.github.com/KrisKasprzak/ILI9341_t3_Keypad/master/Images/09.jpg)
 ![header image](https://raw.github.com/KrisKasprzak/ILI9341_t3_Keypad/master/Images/25.jpg)
 <br>
+Watch this YouTube Video for a demonstration:
+https://youtu.be/PrSxA_QEzuk
+<br>
 <b><h3>Library highlights</b></h3>
 1. Simple to implement library
 2. Users can include both input types in the same program
