@@ -5,7 +5,6 @@
 #include <ILI9341_t3_Controls.h>
 #include <ILI9341_t3_Keypad.h>
 #include <XPT2046_Touchscreen.h>
-#include <ILI9341_t3_PrintScreen_SdFat.h>
 
 // pins for LED and select button on encoder
 #define CS_PIN 10
@@ -18,11 +17,6 @@
 
 int BtnX = 0, BtnY = 0;
 int i = 0;
-char filename[12] = "xx.bmp";
-unsigned long last = 0;
-
-
-
 
 // you know the drill
 // use the second one, this is a mod I made to the lib
@@ -45,8 +39,6 @@ Keyboard MyKeyboard(&Display, &Touch);
 
 
 void setup() {
-
-pinMode(2, INPUT_PULLUP);
 
   Serial.begin(9600);
 
@@ -93,8 +85,6 @@ pinMode(2, INPUT_PULLUP);
   // MyKeyboard.setInitialText("IP 111.222.333.444");
   // optional to populate the input box
   // strcpy(MyKeyboard.data, "TEXT");
-
-  attachInterrupt(2, CAT, FALLING);
 
   drawMenu();
 
@@ -220,23 +210,4 @@ bool ProcessButtonPress(Button TheButton) {
   return false;
 }
 
-void CAT() {
-  i++;
-  if ((millis() - last) > 3000) {
-    last = millis();
-    filename[0] = i / 10 + '0';
-    filename[1] = i - ((i / 10) * 10) + '0';
-    
-    while (digitalRead(2) == LOW) {
-      delay(10);
-    }
-    Serial.print("Saving file: ");    Serial.print(filename);
-    if (SaveBMP24(&Display, A0, filename)) {
-      Serial.println(" - Success.");
-    }
-    else {
-      Serial.println(" - FAILED");
-    }
-  }
-}
 
