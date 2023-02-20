@@ -2,7 +2,7 @@
 
 Latest version 2.0
 <br>
-Version history
+<b><h3>Version History</b></h3>
 
 1.0  2/17/2023    Initial upload      
 2.0  2/19/2023    added support for UTouch touchscreen driver (for Teensy 3.2 only)
