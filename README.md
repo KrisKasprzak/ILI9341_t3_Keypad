@@ -8,7 +8,13 @@ Latest version 2.0
 2.0  2/19/2023    added support for UTouch touchscreen driver (for Teensy 3.2 only)
 
 
-This library includes 2 classes for getting user input using a 0-9 digit number pad and a full keyboard. This library is for the ILI9341_t3 driver to drive common 2.8" LCF displays, and also requires touch screen capability.  This library is dependent on 1) ILI9341_t3, 2) XPT2046_Touchscreen, and 3) ILI9341_t3_Controls libraries.
+This library includes 2 classes for getting user input using a 0-9 digit number pad and a full keyboard. This library is for the ILI9341_t3 driver to drive common 2.8" LCF displays, and also requires touch screen capability.  This library is dependent on 
+<br>
+1) ILI9341_t3
+<br>
+3) 2) XPT2046_Touchscreen OR UTouch.h
+ <br>
+4) 3) ILI9341_t3_Controls libraries.
 
 <br>
 <b><h3>Note: if you are currently using ILI9341_t3_Controls library, make sure you get the latest ILI9341_t3_Controls version 6.0</b></h3>
