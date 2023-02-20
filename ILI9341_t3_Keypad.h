@@ -30,7 +30,7 @@
 #ifndef ILI9341_KEYPAD_H
 #define ILI9341_KEYPAD_H
 
-#define ILI9341_KEYPAD_VER 1.0
+#define ILI9341_KEYPAD_VER 2.0
 
 #if ARDUINO >= 100
 	 #include "Arduino.h"
