@@ -1,4 +1,4 @@
-# Keyboard (numbers and characters) for the ILI9341_t3 and XPT2046_Touchscreen Libraries
+# Keyboard (numbers and characters) for the ILI9341_t3 and XPT2046_Touchscreen/UTouch Libraries
 
 Latest version 2.0
 <br>
@@ -11,10 +11,8 @@ Latest version 2.0
 This library includes 2 classes for getting user input using a 0-9 digit number pad and a full keyboard. This library is for the ILI9341_t3 driver to drive common 2.8" LCF displays, and also requires touch screen capability.  This library is dependent on 
 <br>
 1) ILI9341_t3
-<br>
-3) 2) XPT2046_Touchscreen OR UTouch.h
- <br>
-4) 3) ILI9341_t3_Controls libraries.
+2) XPT2046_Touchscreen OR UTouch.h
+3) 3) ILI9341_t3_Controls libraries.
 
 <br>
 <b><h3>Note: if you are currently using ILI9341_t3_Controls library, make sure you get the latest ILI9341_t3_Controls version 6.0</b></h3>
