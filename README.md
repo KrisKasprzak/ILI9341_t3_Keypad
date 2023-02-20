@@ -12,11 +12,10 @@ This library includes 2 classes for getting user input using a 0-9 digit number 
 <br>
 1) ILI9341_t3
 2) XPT2046_Touchscreen OR UTouch.h
-3) 3) ILI9341_t3_Controls libraries.
+3) ILI9341_t3_Controls libraries.
 
 <br>
 <b><h3>Note: if you are currently using ILI9341_t3_Controls library, make sure you get the latest ILI9341_t3_Controls version 6.0</b></h3>
-<br>
 <br>
 <br>
 <br>
