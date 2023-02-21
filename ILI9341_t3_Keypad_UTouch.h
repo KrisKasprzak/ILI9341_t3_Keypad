@@ -23,7 +23,7 @@
 
   rev   date      author        change
   1.0   2/12/2023      kasprzak      initial code
-
+  1.1   2/21/2023      kasprzak      fixed char overrun
 
 */
 
@@ -79,8 +79,6 @@ public:
 
 	NumberPadU(ILI9341_t3 *Display, UTouch *Touch);
 	
-	
-
 	void init(uint16_t BackColor,uint16_t TextColor, uint16_t ButtonColor, uint16_t BorderColor, 
 	uint16_t PressedTextColor, uint16_t PressedButtonColor, uint16_t PressedBorderColor,
 	const ILI9341_t3_font_t &ButtonFont);
@@ -123,8 +121,9 @@ private:
 	UTouch  *t;
 	
 	void ProcessTouch();
-	
 	bool ProcessButtonPress(Button TheButton);
+	uint8_t get_float_digits(float num);
+	
 	uint16_t CW = 160;  // width center of screen
 	uint16_t CH = 120;  // height center of screen
 	uint16_t BH = 35;
@@ -133,9 +132,9 @@ private:
 	uint16_t TBH = 30;
 	uint16_t OKBW = 70;
 	uint16_t OKBH = 70;
-	char inittext[MAX_KEYBOARD_CHARS];  // display initial text
-	char hc[MAX_KEYBOARD_CHARS];
-	char dn[MAX_KEYBOARD_CHARS];  // display number
+	char inittext[MAX_KEYBOARD_CHARS+2];  // display initial text
+	char hc[MAX_KEYBOARD_CHARS+2];
+	char dn[MAX_KEYBOARD_CHARS+2];  // display number
 	uint16_t BtnX, BtnY;
 	uint16_t kcolor;
 	uint16_t tcolor; 
@@ -185,7 +184,7 @@ public:
 		uint16_t PressedBorderColor
 		);
 
-	 char data[MAX_KEYBOARD_CHARS];
+	 char data[MAX_KEYBOARD_CHARS+1];
 
 private:
 
@@ -194,9 +193,9 @@ private:
 	UTouch  *t;
 	
 	void ProcessTouch();
-	char dn[MAX_KEYBOARD_CHARS];
-    char hc[MAX_KEYBOARD_CHARS];
-	char inittext[MAX_KEYBOARD_CHARS];  // display initial text
+	char dn[MAX_KEYBOARD_CHARS+1];
+        char hc[MAX_KEYBOARD_CHARS+1];
+	char inittext[MAX_KEYBOARD_CHARS+1];  // display initial text
 	bool ProcessButtonPress(Button TheButton);
 	bool aclear = false;
 	bool hideinput = false;
