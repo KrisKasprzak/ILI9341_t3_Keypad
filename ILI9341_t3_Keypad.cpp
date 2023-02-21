@@ -23,6 +23,7 @@
 
   rev   date      author        change
   1.0   2/12/2023      kasprzak      initial code
+  1.1   2/21/2023      kasprzak      fixed char overrun
 
 
 */
@@ -37,7 +38,6 @@ NumberPad::NumberPad(ILI9341_t3 *Display, XPT2046_Touchscreen *Touch) {
   d = Display;
   t = Touch;
 }
-
 
 void NumberPad::init(uint16_t BackColor, uint16_t TextColor,
                   uint16_t ButtonColor, uint16_t BorderColor,
@@ -104,7 +104,7 @@ void NumberPad::setInitialText(const char *Text){
 	
 	uint8_t i;
 	
-	for (i = 0; i < (MAX_KEYBOARD_CHARS-1); i++){
+	for (i = 0; i < (MAX_KEYBOARD_CHARS); i++){
 		inittext[i] = Text[i];
 	}
 	hasinittext = true;
@@ -114,6 +114,41 @@ void NumberPad::setInitialText(const char *Text){
 void NumberPad::hideInput(){
 	
 	hideinput = true;
+}
+
+int NumberPad::get_float_digits(float num)
+{
+    int digits=0;
+    float ori=num;//storing original number
+    long num2=num;
+    while(num2>0)//count no of digits before floating point
+    {
+        digits++;
+        num2=num2/10;
+    }
+    if(ori==0)
+        digits=1;
+    num=ori;
+    float  no_float;
+    no_float=ori*(pow(10, (8-digits)));
+    long long int total=(long long int)no_float;
+    int no_of_digits, extrazeroes=0;
+    for(int i=0; i<8; i++)
+    {
+        int dig;
+        dig=total%10;
+        total=total/10;
+        if(dig!=0)
+            break;
+        else
+            extrazeroes++;
+    }
+    no_of_digits=8-extrazeroes;
+	if ( ((long) num) != num){
+		// has decimal
+		//no_of_digits++;
+	}
+    return no_of_digits;
 }
 
 void NumberPad::getInput() {
@@ -126,17 +161,18 @@ void NumberPad::getInput() {
 
   bool hasDP = false;
   uint8_t np = 1;              // digit number
+uint8_t digits = 0;
 
   bool hasneg = false;
 
   bool KeepIn = true;
   float TheNumber = 0.0;
   
-  memset(dn,'\0',MAX_KEYBOARD_CHARS);
+  memset(dn,'\0',MAX_KEYBOARD_CHARS+2);
   dn[0] = ' ';
-  memset(hc,'\0',MAX_KEYBOARD_CHARS);
+  memset(hc,'\0',MAX_KEYBOARD_CHARS+2);
   hc[0] = ' ';
-
+	
   
 
   // get the decimals
@@ -149,7 +185,16 @@ void NumberPad::getInput() {
 			value = value * -1.0;
 		}
 		
-		dtostrf(value, 0, 6, dn);
+		digits = get_float_digits(value);
+		Serial.println(digits);
+		if (digits > MAX_KEYBOARD_CHARS){
+			digits =digits - MAX_KEYBOARD_CHARS;
+		}
+		else {
+			digits = MAX_KEYBOARD_CHARS-digits;
+		}
+		Serial.println(digits);
+		dtostrf(value, 0, digits, dn);
 		
 		if (!hasneg){
 			value = value * -1.0;
@@ -282,7 +327,7 @@ void NumberPad::getInput() {
 		
           //valid number
           if ((b >= 0) & (b <= 9)) {
-            if (np > 10) { 
+            if (np > MAX_KEYBOARD_CHARS) { 
 			break; 
 			}
 			if ((dn[1] == '0') && (dn[2] != '.')) {
@@ -365,11 +410,11 @@ void NumberPad::getInput() {
 }
 
 void NumberPad::ProcessTouch() {
-  if (t->touched()) {
-	  
-    p = t->getPoint();
-    BtnX = p.x;
-    BtnY = p.y;
+
+	if (t->touched()){
+		p = t->getPoint();
+		BtnX = p.x;
+		BtnY = p.y;
 	
 #ifdef debug 
 	Serial.print("real coordinates:");
@@ -447,8 +492,8 @@ void Keyboard::getInput() {
   bool SpecialChar = false;
   bool KeepIn = true;
   
-    memset(dn,'\0',MAX_KEYBOARD_CHARS);
-  memset(hc,'\0',MAX_KEYBOARD_CHARS);
+    memset(dn,'\0',MAX_KEYBOARD_CHARS+1);
+  memset(hc,'\0',MAX_KEYBOARD_CHARS+1);
   
     // get the decimals
 	if (strlen(data) > 0){
@@ -970,7 +1015,7 @@ void Keyboard::setInitialText(const char *Text){
 	
 	uint8_t i;
 	
-	for (i = 0; i < (MAX_KEYBOARD_CHARS-1); i++){
+	for (i = 0; i < (MAX_KEYBOARD_CHARS); i++){
 		inittext[i] = Text[i];
 	}
 	hasinittext = true;
@@ -980,10 +1025,10 @@ void Keyboard::setInitialText(const char *Text){
 
 void Keyboard::ProcessTouch() {
 
-  if (t->touched()) {
-    p = t->getPoint();
-    BtnX = p.x;
-    BtnY = p.y;
+	if (t->touched()){		  
+		p = t->getPoint();
+		BtnX = p.x;
+		BtnY = p.y;
 
 #ifdef debug
      Serial.print(" real coordinates:");
