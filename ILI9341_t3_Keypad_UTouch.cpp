@@ -114,7 +114,40 @@ void NumberPadU::hideInput(){
 	
 	hideinput = true;
 }
-
+int NumberPad::get_float_digits(float num)
+{
+    int digits=0;
+    float ori=num;//storing original number
+    long num2=num;
+    while(num2>0)//count no of digits before floating point
+    {
+        digits++;
+        num2=num2/10;
+    }
+    if(ori==0)
+        digits=1;
+    num=ori;
+    float  no_float;
+    no_float=ori*(pow(10, (8-digits)));
+    long long int total=(long long int)no_float;
+    int no_of_digits, extrazeroes=0;
+    for(int i=0; i<8; i++)
+    {
+        int dig;
+        dig=total%10;
+        total=total/10;
+        if(dig!=0)
+            break;
+        else
+            extrazeroes++;
+    }
+    no_of_digits=8-extrazeroes;
+	if ( ((long) num) != num){
+		// has decimal
+		//no_of_digits++;
+	}
+    return no_of_digits;
+}
 void NumberPadU::getInput() {
 
 
@@ -127,13 +160,13 @@ void NumberPadU::getInput() {
   uint8_t np = 1;              // digit number
 
   bool hasneg = false;
-
+  uint8_t digits = 0;
   bool KeepIn = true;
   float TheNumber = 0.0;
   
-  memset(dn,'\0',MAX_KEYBOARD_CHARS);
+  memset(dn,'\0',MAX_KEYBOARD_CHARS+2);
   dn[0] = ' ';
-  memset(hc,'\0',MAX_KEYBOARD_CHARS);
+  memset(hc,'\0',MAX_KEYBOARD_CHARS+2);
   hc[0] = ' ';
 
   
@@ -148,7 +181,16 @@ void NumberPadU::getInput() {
 			value = value * -1.0;
 		}
 		
-		dtostrf(value, 0, 6, dn);
+		digits = get_float_digits(value);
+
+		if (digits > MAX_KEYBOARD_CHARS){
+			digits =digits - MAX_KEYBOARD_CHARS;
+		}
+		else {
+			digits = MAX_KEYBOARD_CHARS-digits;
+		}
+
+		dtostrf(value, 0, digits, dn);
 		
 		if (!hasneg){
 			value = value * -1.0;
@@ -281,7 +323,7 @@ void NumberPadU::getInput() {
 		
           //valid number
           if ((b >= 0) & (b <= 9)) {
-            if (np > 10) { 
+            if (np > MAX_KEYBOARD_CHARS) { 
 			break; 
 			}
 			if ((dn[1] == '0') && (dn[2] != '.')) {
@@ -445,8 +487,8 @@ void KeyboardU::getInput() {
   bool SpecialChar = false;
   bool KeepIn = true;
   
-    memset(dn,'\0',MAX_KEYBOARD_CHARS);
-  memset(hc,'\0',MAX_KEYBOARD_CHARS);
+    memset(dn,'\0',MAX_KEYBOARD_CHARS+1);
+  memset(hc,'\0',MAX_KEYBOARD_CHARS+1);
   
     // get the decimals
 	if (strlen(data) > 0){
@@ -968,7 +1010,7 @@ void KeyboardU::setInitialText(const char *Text){
 	
 	uint8_t i;
 	
-	for (i = 0; i < (MAX_KEYBOARD_CHARS-1); i++){
+	for (i = 0; i < (MAX_KEYBOARD_CHARS); i++){
 		inittext[i] = Text[i];
 	}
 	hasinittext = true;
