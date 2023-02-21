@@ -116,7 +116,7 @@ void NumberPad::hideInput(){
 	hideinput = true;
 }
 
-int NumberPad::get_float_digits(float num)
+uint8_t NumberPad::get_float_digits(float num)
 {
     int digits=0;
     float ori=num;//storing original number
