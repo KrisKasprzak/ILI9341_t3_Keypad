@@ -23,7 +23,7 @@
 
   rev   date      author        change
   1.0   2/12/2023      kasprzak      initial code
-
+  1.1   2/21/2023      kasprzak      fixed char overrun
 
 */
 
