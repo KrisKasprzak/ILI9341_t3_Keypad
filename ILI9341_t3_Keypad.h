@@ -123,7 +123,7 @@ private:
 	void ProcessTouch();
 	
 	bool ProcessButtonPress(Button TheButton);
-	int get_float_digits(float num);
+	uint8_t get_float_digits(float num);
 	
 	uint16_t CW = 160;  // width center of screen
 	uint16_t CH = 120;  // height center of screen
