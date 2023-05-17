@@ -1,4 +1,4 @@
-# Keyboard (numbers and characters) for the ILI9341_t3 and XPT2046_Touchscreen/UTouch Libraries
+# Keyboard (numbers and characters) for Teensy MCU's
 
 Latest version 2.0
 <br>
