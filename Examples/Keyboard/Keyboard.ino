@@ -9,6 +9,7 @@
 // pins for LED and select button on encoder
 #define CS_PIN 10
 #define DC_PIN 9
+#define RST_PIN 8
 #define T_CS 0
 #define T_IRQ 1
 #define SD_CS A0
@@ -19,9 +20,7 @@ int BtnX = 0, BtnY = 0;
 int i = 0;
 
 // you know the drill
-// use the second one, this is a mod I made to the lib
-ILI9341_t3 Display(CS_PIN, DC_PIN, 240, 320, 8);  //Display object
-// ILI9341_t3 Display(CS_PIN, DC_PIN, 8);  //Display object
+ILI9341_t3 Display(CS_PIN, DC_PIN, RST_PIN);  //Display object
 
 XPT2046_Touchscreen Touch(T_CS, T_IRQ);
 TS_Point p;
