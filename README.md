@@ -140,11 +140,9 @@ BtnY = map(p.y, 3850, 304, 0, 240);
 ![header image](https://raw.github.com/KrisKasprzak/ILI9341_t3_Keypad/master/Images/09.jpg)
 ![header image](https://raw.github.com/KrisKasprzak/ILI9341_t3_Keypad/master/Images/12.jpg)
 ![header image](https://raw.github.com/KrisKasprzak/ILI9341_t3_Keypad/master/Images/14.jpg)
-![header image](https://raw.github.com/KrisKasprzak/ILI9341_t3_Keypad/master/Images/16.jpg)<br>
 ![header image](https://raw.github.com/KrisKasprzak/ILI9341_t3_Keypad/master/Images/18.jpg)
 ![header image](https://raw.github.com/KrisKasprzak/ILI9341_t3_Keypad/master/Images/20.jpg)
 ![header image](https://raw.github.com/KrisKasprzak/ILI9341_t3_Keypad/master/Images/23.jpg)
 ![header image](https://raw.github.com/KrisKasprzak/ILI9341_t3_Keypad/master/Images/25.jpg)
-![header image](https://raw.github.com/KrisKasprzak/ILI9341_t3_Keypad/master/Images/27.jpg)
 
 
