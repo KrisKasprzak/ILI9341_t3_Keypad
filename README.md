@@ -96,7 +96,6 @@ _  <br>
   // strcpy(MyKeyboard.data, "TEXT");
   <br>
 <br>
-
 7. When ready get user input
 <br>
 MyNumberPad.getInput(); // this will display the key pad control
@@ -132,7 +131,6 @@ BtnX = map(p.x, 3975, 169, 0, 320);
 BtnY = map(p.y, 3850, 304, 0, 240);    
 <br>
 <b><h3>Example Screenshots</b></h3>
-<br>
 <br>
 <br>
 ![header image](https://raw.github.com/KrisKasprzak/ILI9341_t3_Keypad/master/Images/03.jpg)
