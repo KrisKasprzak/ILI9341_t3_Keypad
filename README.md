@@ -3,12 +3,16 @@
 Latest version 2.0
 <br>
 <b><h3>Version History</b></h3>
-  1.0   2/12/2023      kasprzak      initial code
-  1.1   2/21/2023      kasprzak      fixed number overrun issue
-  2.0   3/14/2023      kasprzak      fixed fonts for MEGA
-  3.0   3/14/2024      kasprzak      complete rewrite to support ESP32
-  4.0   5/1/2024      kasprzak      added corner rounding added trailing zero removal, removed dependency on special controls library
-
+1.0   2/12/2023      kasprzak      initial code
+<br>
+1.1   2/21/2023      kasprzak      fixed number overrun issue
+<br>
+2.0   3/14/2023      kasprzak      fixed fonts for MEGA
+<br>
+3.0   3/14/2024      kasprzak      complete rewrite to support ESP32
+<br>
+4.0   5/1/2024      kasprzak      added corner rounding added trailing zero removal, removed dependency on special controls library
+<br>
 
 This library includes 2 classes for getting user input using a 0-9 digit number pad and a full keyboard. This library is for the ILI9341_t3 driver to drive common 2.8" LCF displays, and also requires touch screen capability.  This library is dependent on 
 <br>
