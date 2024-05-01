@@ -60,10 +60,13 @@ https://youtu.be/PrSxA_QEzuk
 4. create the keyboard and / or numberpad object
 <br>
 NumberPad MyNumberPad(&Display, &Touch);
+<br>
+or...
+<br>
 Keyboard MyKeyboard(&Display, &Touch);
 <br>
 <br>
-5. In setup, initialize the objects, and optionally specify any options
+6. In setup, initialize the objects, and optionally specify any options
 <br>
 MyNumberPad.init(ILI9341_BLACK, ILI9341_WHITE, ILI9341_BLUE, ILI9341_NAVY, ILI9341_WHITE, ILI9341_CYAN, ILI9341_YELLOW, FONT_BUTTON);
 <br>
@@ -94,7 +97,7 @@ _  <br>
   <br>
 <br>
 
-6. When ready get user input
+7. When ready get user input
 <br>
 MyNumberPad.getInput(); // this will display the key pad control
 <br>
@@ -104,7 +107,7 @@ or
 MyKeyboard.getInput(); // this will display the key pad control
 <br>
 <br>
-7. Once the user completes input, read the results
+8. Once the user completes input, read the results
 <br>
 Serial.println(MyNumberPad.value);
 <br>
