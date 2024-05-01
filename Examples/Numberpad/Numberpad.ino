@@ -5,7 +5,7 @@
 #include <ILI9341_t3_Keypad.h>
 #include <XPT2046_Touchscreen.h>
 
-// pins for LED and select button on encoder
+// For Teensy
 #define TFT_CS 10
 #define TFT_DC 9
 #define TFT_RST 8
@@ -14,7 +14,6 @@
 
 // easy way to include fonts but change globally
 #define FONT_BUTTON Arial_16_Bold  // font for keypad buttons
-
 
 // you will probably need to calibrate your screen, these are coordinates of presses on display
 uint16_t ScreenLeft = 350, ScreenRight = 3900, ScreenTop = 300, ScreenBottom = 3800;
@@ -40,14 +39,7 @@ void setup() {
   Touch.begin();
   Touch.setRotation(3);
 
-
   Display.fillScreen(ILI9341_BLACK);
-
-  // initialize the numberpad object
-  // simulate a good old fashioned number input
-  // void init(uint16_t BackColor,uint16_t TextColor, uint16_t ButtonColor,
-  // uint16_t PressedTextColor, uint16_t PressedButtonColor,
-  // const GFXfont *ButtonFont);
 
   MyNumberPad.init(ILI9341_BLACK, ILI9341_BLACK, ILI9341_LIGHTGREY, ILI9341_WHITE, ILI9341_DARKGREY, FONT_BUTTON);
   MyNumberPad.setTouchLimits(ScreenLeft, ScreenRight, ScreenTop, ScreenBottom);
