@@ -4,7 +4,7 @@
 #include <ILI9341_t3_Keypad.h>
 #include <XPT2046_Touchscreen.h>
 
-// pins for LED and select button on encoder
+// For Teensy
 #define CS_PIN 10
 #define DC_PIN 9
 #define RST_PIN 8
@@ -17,13 +17,11 @@
 // you will probably need to calibrate your screen, these are coordinates of presses on display
 uint16_t ScreenLeft = 350, ScreenRight = 3900, ScreenTop = 300, ScreenBottom = 3800;
 
-
 ILI9341_t3 Display(CS_PIN, DC_PIN, RST_PIN);
 
 XPT2046_Touchscreen Touch(T_CS, T_IRQ);
 
 TS_Point TP;
-
 
 Keyboard SSIDPasswordPad(&Display, &Touch);
 
