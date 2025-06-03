@@ -21,16 +21,11 @@
   On a personal note, if you develop an application or product using this library
   and make millions of dollars, I'm happy for you!
 
-  rev   date      author        change
-  1.0   2/12/2023      kasprzak      initial code
-  1.1   12/08/2024     kasprzak      added ability to set screen size for touch processing
-
-
 */
 
 #include "ILI9341_t3_Keypad.h"
 #include <ILI9341_t3.h>
-#include <ILI9341_t3_Controls.h>  // button library
+// #include <ILI9341_t3_Controls.h>  // button library
 #include <XPT2046_Touchscreen.h>
 
 
@@ -40,21 +35,28 @@ NumberPad::NumberPad(ILI9341_t3 *Display, XPT2046_Touchscreen *Touch) {
 }
 
 void NumberPad::init(uint16_t BackColor, uint16_t TextColor,
-                  uint16_t ButtonColor, uint16_t BorderColor,
+                  uint16_t ButtonColor,
                   uint16_t PressedTextColor,
                   uint16_t PressedButtonColor, uint16_t PressedBorderColor,
                   const ILI9341_t3_font_t &ButtonFont) {
 
-  kcolor = BackColor;
-  tcolor = TextColor;
-  bcolor = ButtonColor;
-  rcolor = BorderColor;
-  ptextcolor = PressedTextColor;
-  inputt = BackColor;
-  inputb = TextColor;
-  value = 0.0;
-  bfont = ButtonFont;
-  
+	kcolor = BackColor;
+	tcolor = TextColor;
+	ptcolor = PressedTextColor;
+	bcolor = ButtonColor;
+	pbcolor = PressedButtonColor;
+	rcolor = PressedBorderColor;
+	ptextcolor = PressedTextColor;
+	inputt = BackColor;
+	inputb = TextColor;
+	value = 0.0;
+	bfont = ButtonFont;
+	bHigh = 40;
+	bWide = 40;
+	rad = 0;
+	numdec = 3;
+	clickpin = -1;
+   
   // in this class we are NOT initially writing to the char[0] as it's reserved for the - sign
   // hence we need to populate it to eliminate null terminator
 
@@ -69,27 +71,14 @@ void NumberPad::setTouchLimits(uint16_t ScreenLeft, uint16_t ScreenRight, uint16
   screenY240 = ScreenBottom;
 }
 
+char *NumberPad::getCharValue() {
+
+  return dn;
+}
+
 void NumberPad::setDisplayColor(uint16_t TextColor, uint16_t BackColor) {
   inputt = TextColor;
   inputb = BackColor;
-}
-
-void NumberPad::enableClick(int8_t Pin){
-	
-	clickpin = Pin;
-
-	
-}
-
-void NumberPad::Click(){
-	
-	if (clickpin >= 0) {
-	analogWriteFrequency(clickpin, 200);
-	analogWrite(clickpin, 127);
-	delay(5);
-	analogWrite(clickpin, 0);
-	}
-	
 }
 
 void NumberPad::setLocation(uint16_t CenterWidth, uint16_t CenterHeight) {
@@ -106,11 +95,11 @@ void NumberPad::setButtonSizes(uint16_t ButtonWidth, uint16_t ButtonHeight, uint
   OKBH = OKButtonHeight;
 }
 
-void NumberPad::enableDecimal(bool State = true) {
+void NumberPad::enableDecimal(bool State ) {
   decstate = State;
 }
 
-void NumberPad::enableNegative(bool State = true) {
+void NumberPad::enableNegative(bool State ) {
   negstate = State;
 }
 
@@ -126,371 +115,451 @@ void NumberPad::setMinMax(float MininumValue, float MaximumValue) {
   maxval = MaximumValue;
 }
 
-void NumberPad::setInitialText(const char *Text){
-	
-	uint8_t i;
-	
-	for (i = 0; i < (MAX_KEYBOARD_CHARS); i++){
-		inittext[i] = Text[i];
-	}
-	hasinittext = true;
-	
+void NumberPad::setCornerRadius(uint8_t Radius) {
+  rad = Radius;
+  if (Radius > 10) {
+    rad = 10;
+  }
 }
 
+void NumberPad::setInitialText(const char *Text) {
 
-void NumberPad::setRotation(uint8_t Rotation){
-	rotation = Rotation;
+  uint8_t i;
+
+  for (i = 0; i < (MAX_KEYBOARD_CHARS); i++) {
+    inittext[i] = Text[i];
+  }
+  hasinittext = true;
 }
 
+void NumberPad::hideInput() {
 
-void NumberPad::setDecimals(uint8_t Decimals){
-	digits = Decimals;
+  hideinput = true;
 }
 
-void NumberPad::hideInput(){
-	
-	hideinput = true;
+void NumberPad::setDecimals(uint8_t Value) {
+
+numdec = Value;
+
+}
+
+void NumberPad::setClickPin(int Value) {
+
+clickpin = Value;
+
 }
 
 void NumberPad::getInput() {
 
-
-  uint16_t KW = (3 * BW) + (5 * BS) + OKBW;
-  uint16_t KH = (4 * BH) + (6 * BS) + TBH;
   uint16_t i = 0;
   uint16_t b = 0;
-
   bool hasDP = false;
-  uint8_t np = 1;              // digit number
-  
-
+  uint8_t np = 1;  // digit number
+  // bool CanBackUp = false;
   bool hasneg = false;
-
   bool KeepIn = true;
   float TheNumber = 0.0;
-  
-  memset(dn,'\0',MAX_KEYBOARD_CHARS+2);
-  dn[0] = ' ';
-  memset(hc,'\0',MAX_KEYBOARD_CHARS+2);
-  hc[0] = ' ';
+    
 	
 
 
-  // get the decimals
+  memset(dn, '\0', MAX_KEYBOARD_CHARS + 2);
+  dn[0] = ' ';
+  memset(hc, '\0', MAX_KEYBOARD_CHARS + 2);
+  hc[0] = ' ';
+
+	
+dtostrf(value, 0, numdec, dn);
+		/*
+  if (value != 0.0) {
 
 	if (value < 0) {
 		hasneg = true;
 	}
-	else {
-		value = value * -1.0;
+
+	if (numdec== 0){
+		sprintf(dn, "% d", (int) value);
 	}
-
-	if (digits > MAX_KEYBOARD_CHARS){
-		digits = MAX_KEYBOARD_CHARS-2;
+	else if (numdec == 1) {
+		sprintf(dn, "% 0.1f",  value);	
 	}
-
-	dtostrf(value, 0, digits, dn);
-
-	if (!hasneg){
-		value = value * -1.0;
-		dn[0] =  ' ';
+	else if (numdec == 2) {
+		sprintf(dn, "% 0.2f",  value);	
 	}
+	else if (numdec == 3) {
+		sprintf(dn, "% 0.3f",  value);	
+		
 
-	np = strlen(dn); // account for possible sign
+
+
+	}
+	else if (numdec == 4) {
+		sprintf(dn, "% 0.4f",  value);	
+	}
+	else  {
+		sprintf(dn, "% 0.5f",  value);	
+	}
 
 	
-  //  https://javl.github.io/image2cpp/
-
-  // 20 x 20
-  // 'check', 40x40px
-  const unsigned char check[] = {
-    0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x01, 0xff, 0x80, 0x00, 0x00, 0x0f, 0xff, 0xf0, 0x00, 0x00,
-    0x3f, 0xff, 0xfc, 0x00, 0x00, 0x7e, 0x00, 0x7e, 0x00, 0x01, 0xf8, 0x00, 0x1f, 0x80, 0x03, 0xe0,
-    0x00, 0x07, 0x00, 0x07, 0xc0, 0x00, 0x02, 0x38, 0x07, 0x80, 0x00, 0x00, 0x7c, 0x0f, 0x00, 0x00,
-    0x00, 0xfc, 0x1e, 0x00, 0x00, 0x01, 0xfe, 0x1c, 0x00, 0x00, 0x03, 0xfc, 0x3c, 0x00, 0x00, 0x07,
-    0xf8, 0x38, 0x00, 0x00, 0x0f, 0xf0, 0x38, 0x00, 0x00, 0x1f, 0xe0, 0x70, 0x10, 0x00, 0x3f, 0xc6,
-    0x70, 0x38, 0x00, 0x7f, 0xce, 0x70, 0x7c, 0x00, 0xff, 0x8e, 0x70, 0xfe, 0x01, 0xff, 0x0e, 0x70,
-    0xff, 0x01, 0xfe, 0x0e, 0x70, 0xff, 0x83, 0xfc, 0x0e, 0x70, 0x7f, 0xc7, 0xf8, 0x0e, 0x70, 0x7f,
-    0xef, 0xf0, 0x0e, 0x70, 0x3f, 0xff, 0xf0, 0x0e, 0x70, 0x1f, 0xff, 0xe0, 0x0e, 0x78, 0x0f, 0xff,
-    0xc0, 0x1c, 0x38, 0x07, 0xff, 0x80, 0x1c, 0x38, 0x03, 0xff, 0x80, 0x1c, 0x1c, 0x01, 0xff, 0x00,
-    0x38, 0x1e, 0x00, 0xfe, 0x00, 0x78, 0x0e, 0x00, 0x7c, 0x00, 0x70, 0x0f, 0x00, 0x1c, 0x00, 0xf0,
-    0x07, 0x80, 0x00, 0x01, 0xe0, 0x03, 0xe0, 0x00, 0x07, 0xc0, 0x01, 0xf0, 0x00, 0x0f, 0x80, 0x00,
-    0xfe, 0x00, 0x7f, 0x00, 0x00, 0x3f, 0xff, 0xfc, 0x00, 0x00, 0x0f, 0xff, 0xf0, 0x00, 0x00, 0x03,
-    0xff, 0xc0, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00
-  };
-  // 'Arrow', 20x20px
-  const unsigned char arrow[] = {
-    0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0x00, 0x00, 0x06,
-    0x00, 0x00, 0x0e, 0x00, 0x00, 0x1e, 0x00, 0x00, 0x3f, 0xff, 0xf0, 0x7f, 0xff, 0xf0, 0x7f, 0xff,
-    0xf0, 0x3f, 0xff, 0xf0, 0x1e, 0x00, 0x00, 0x0e, 0x00, 0x00, 0x06, 0x00, 0x00, 0x02, 0x00, 0x00,
-    0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00
-  };
-  // 'x', 40x40px
-  const unsigned char cancel[] = {
-    0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x03, 0xff, 0xc0, 0x00, 0x00, 0x0f, 0xff, 0xf0, 0x00, 0x00,
-    0x3f, 0xff, 0xfc, 0x00, 0x00, 0xfe, 0x00, 0xff, 0x00, 0x01, 0xf8, 0x00, 0x1f, 0x80, 0x03, 0xe0,
-    0x00, 0x07, 0xc0, 0x07, 0xc0, 0x00, 0x03, 0xe0, 0x0f, 0x80, 0x00, 0x01, 0xf0, 0x0f, 0x1c, 0x00,
-    0x00, 0xf0, 0x1e, 0x3e, 0x00, 0x3c, 0x78, 0x1c, 0x7f, 0x00, 0x7e, 0x38, 0x3c, 0x7f, 0x00, 0xfe,
-    0x3c, 0x38, 0x7f, 0x81, 0xfe, 0x1c, 0x78, 0x7f, 0xc3, 0xfe, 0x1c, 0x70, 0x3f, 0xef, 0xfc, 0x1e,
-    0x70, 0x1f, 0xff, 0xf8, 0x0e, 0x70, 0x1f, 0xff, 0xe0, 0x0e, 0x70, 0x0f, 0xff, 0xc0, 0x0e, 0x70,
-    0x07, 0xff, 0x80, 0x0e, 0x70, 0x03, 0xff, 0x00, 0x0e, 0x70, 0x03, 0xff, 0x00, 0x0e, 0x70, 0x07,
-    0xff, 0x00, 0x0e, 0x70, 0x0f, 0xff, 0x80, 0x0e, 0x70, 0x0f, 0xff, 0xc0, 0x0e, 0x78, 0x1f, 0xff,
-    0xe0, 0x1e, 0x38, 0x3f, 0xdf, 0xf0, 0x1c, 0x3c, 0x7f, 0x8f, 0xf8, 0x3c, 0x3c, 0xff, 0x07, 0xfc,
-    0x38, 0x19, 0xfe, 0x03, 0xfc, 0x78, 0x0b, 0xfe, 0x01, 0xfc, 0xf0, 0x03, 0xfc, 0x00, 0xf9, 0xf0,
-    0x07, 0xf8, 0x00, 0x73, 0xe0, 0x07, 0xf0, 0x00, 0x07, 0xc0, 0x03, 0xe0, 0x00, 0x1f, 0x80, 0x01,
-    0xce, 0x00, 0x7f, 0x00, 0x00, 0x8f, 0xff, 0xfc, 0x00, 0x00, 0x1f, 0xff, 0xf8, 0x00, 0x00, 0x03,
-    0xff, 0xc0, 0x00, 0x00, 0x00, 0x18, 0x00, 0x00
-  };
-
-
-Button NumberPadBtn[16]{
-  { d },
-  { d },
-  { d },
-  { d },
-  { d },
-  { d },
-  { d },
-  { d },
-  { d },
-  { d },
-  { d },
-  { d },
-  { d },
-  { d },
-  { d },
-  { d }
-
-};
-  //7
-  NumberPadBtn[7].init(CW - (KW / 2) + BS + (BW / 2), CH - KH / 2 + BS + BS + TBH + (BH / 2), BW, BH, rcolor, bcolor, tcolor, kcolor, "7", 0, 0, bfont);
-  //8
-  NumberPadBtn[8].init(CW - (KW / 2) + 2 * BS + BW + (BW / 2), CH - KH / 2 + BS + BS + TBH + (BH / 2), BW, BH, rcolor, bcolor, tcolor, kcolor, "8", 0, 0, bfont);
-  //9
-  NumberPadBtn[9].init(CW - (KW / 2) + 3 * BS + 2 * BW + (BW / 2), CH - KH / 2 + BS + BS + TBH + (BH / 2), BW, BH, rcolor, bcolor, tcolor, kcolor, "9", 0, 0, bfont);
-  //4
-  NumberPadBtn[4].init(CW - (KW / 2) + BS + (BW / 2), CH - KH / 2 + 3 * BS + TBH + BH + (BH / 2), BW, BH, rcolor, bcolor, tcolor, kcolor, "4", 0, 0, bfont);
-  // 5
-  NumberPadBtn[5].init(CW - (KW / 2) + 2 * BS + BW + (BW / 2), CH - KH / 2 + 3 * BS + TBH + BH + (BH / 2), BW, BH, rcolor, bcolor, tcolor, kcolor, "5", 0, 0, bfont);
-  //6
-  NumberPadBtn[6].init(CW - (KW / 2) + 3 * BS + 2 * BW + (BW / 2), CH - KH / 2 + 3 * BS + TBH + BH + (BH / 2), BW, BH, rcolor, bcolor, tcolor, kcolor, "6", 0, 0, bfont);
-  // 1
-  NumberPadBtn[1].init(CW - (KW / 2) + BS + (BW / 2), CH - KH / 2 + 4 * BS + TBH + 2 * BH + (BH / 2), BW, BH, rcolor, bcolor, tcolor, kcolor, "1", 0, 0, bfont);
-  // 2
-  NumberPadBtn[2].init(CW - (KW / 2) + 2 * BS + BW + (BW / 2), CH - KH / 2 + 4 * BS + TBH + 2 * BH + (BH / 2), BW, BH, rcolor, bcolor, tcolor, kcolor, "2", 0, 0, bfont);
-  // 3
-  NumberPadBtn[3].init(CW - (KW / 2) + 3 * BS + 2 * BW + (BW / 2), CH - KH / 2 + 4 * BS + TBH + 2 * BH + (BH / 2), BW, BH, rcolor, bcolor, tcolor, kcolor, "3", 0, 0, bfont);
-  // -
-  NumberPadBtn[10].init(CW - (KW / 2) + BS + (BW / 2), CH - KH / 2 + 5 * BS + TBH + 3 * BH + (BH / 2), BW, BH, rcolor, bcolor, tcolor, kcolor, "-", 0, 0, bfont);
-  // 0
-  NumberPadBtn[0].init(CW - (KW / 2) + 2 * BS + BW + (BW / 2), CH - KH / 2 + 5 * BS + TBH + 3 * BH + (BH / 2), BW, BH, rcolor, bcolor, tcolor, kcolor, "0", 0, 0, bfont);
-  // .
-  NumberPadBtn[11].init(CW - (KW / 2) + 3 * BS + 2 * BW + (BW / 2), CH - KH / 2 + 5 * BS + TBH + 3 * BH + (BH / 2), BW, BH, rcolor, bcolor, tcolor, kcolor, ".", 0, 0, bfont);
-  // backspace
-  NumberPadBtn[12].init(CW + (KW / 2) - BS - (OKBW / 2), CH - (KH / 2) + BS + (TBH / 2), OKBW, TBH, rcolor, bcolor, tcolor, kcolor, arrow, 20, 20, (OKBW - 20) / 2, (TBH - 20) / 5);
-  // done
-  NumberPadBtn[13].init(CW + (KW / 2) - BS - (OKBW / 2), CH + (KH / 2) - BS - (OKBH / 2), OKBW, OKBH, rcolor, bcolor, ILI9341_GREEN, kcolor, check, 40, 40, (OKBW - 40) / 2, (OKBH - 40) / 2);
-  // cancel
-  NumberPadBtn[14].init(CW + (KW / 2) - BS - (OKBW / 2), CH + KH / 2 - 2 * BS - OKBH - (OKBH / 2), OKBW, OKBH, rcolor, bcolor, ILI9341_RED, kcolor, cancel, 40, 40, (OKBW - 40) / 2, (OKBH - 40) / 2);
-
-
-	if (decstate){
-		NumberPadBtn[10].enable();
-	}
-	else {
-		NumberPadBtn[10].disable();
-	}
+  }
+	*/
 	
-	if (negstate){
-		NumberPadBtn[11].enable();
-	}
-	else {
-		NumberPadBtn[11].disable();
-	}
+	np = strlen(dn); 
+	/*
+    // get the decimals
+	  for (i = 0; i < strlen(dn); i++){
+		  
+		  if(dn[i] == '.'){
+			  hasDP = true;
+			  break;
+		  }
+	  }
 
+	// strip trailing zeros
+	if (hasDP) {
+		
+		for ( i = strlen(dn)-1; i > 0; i--) {
+					
+			if (dn[i] == '.'){
+				dn[i] = '\0';
+				np--;
+				hasDP = false;
+			}
+			else if (dn[i] == '0'){
+				dn[i] = '\0';
+				np--;
+			}
+			else {
+				break;
+			}
+		}
+	}
+	*/
+  if (hideinput){
+	  hc[0] = ' ';
+    for (i = 1; i < strlen(dn); i++){	  
+	  hc[i] = '*';
+	}
+  }
+
+  BUTTON Buttons[15];
+
+  BuildButton(&Buttons[0], Col2, Row4, bWide, bHigh, 0x30);             // 0
+  BuildButton(&Buttons[1], Col1, Row1, bWide, bHigh, 0x31);             // 1
+  BuildButton(&Buttons[2], Col2, Row1, bWide, bHigh, 0x32);             // 2
+  BuildButton(&Buttons[3], Col3, Row1, bWide, bHigh, 0x33);             // 3
+  BuildButton(&Buttons[4], Col1, Row2, bWide, bHigh, 0x34);             // 4
+  BuildButton(&Buttons[5], Col2, Row2, bWide, bHigh, 0x35);             // 5
+  BuildButton(&Buttons[6], Col3, Row2, bWide, bHigh, 0x36);             // 6
+  BuildButton(&Buttons[7], Col1, Row3, bWide, bHigh, 0x37);             // 7
+  BuildButton(&Buttons[8], Col2, Row3, bWide, bHigh, 0x38);             // 8
+  BuildButton(&Buttons[9], Col3, Row3, bWide, bHigh, 0x39);             // 9
+  BuildButton(&Buttons[10], Col1, Row4, bWide, bHigh, 0x2E);            // .
+  BuildButton(&Buttons[11], Col3, Row4, bWide, bHigh, 0x2D);            // -
+  BuildButton(&Buttons[12], Col4, Row0, bWide * 2, bHigh, 0x00);            // back
+  BuildButton(&Buttons[13], Col4, Row1, bWide * 2, (bHigh * 2) + 5, 0x01);  // OK
+  BuildButton(&Buttons[14], Col4, Row3, bWide * 2, (bHigh * 2) + 5, 0x02);  // cancel
 
   // large background box
-  d->fillRect(CW - (KW / 2), CH - KH / 2, KW, KH, kcolor);
+  d->fillRect(Col1 - 5, Row0 - 5, Col4 - Col1 + Buttons[13].w + 10, Row4 - Row0 + bHigh + 10, kcolor);
 
   // text input box
-  d->fillRect(CW - (KW / 2) + BS, CH - KH / 2 + BS, 2 * BS + 3 * BW, TBH, inputb);
-  d->setCursor(CW - (KW / 2) + BS + 5, CH - KH / 2 + BS + 5);
+  d->fillRect(Col1, Row0, Col3 - Col1 + bWide, bHigh, inputb);
   d->setFont(bfont);
   d->setTextColor(inputt, inputb);
-  if (hasinittext){
-	d->print(inittext);
+  d->setCursor(Col1 + 5, Row0 + 10);
+
+	if (hasinittext) {
+		d->print(inittext);
+	} 
+	else if (hideinput){
+		d->print(hc);
+	}
+	else {
+		d->print(dn);
+	}
+
+
+  for (i = 0; i < 15; i++) {
+    DrawButton(&Buttons[i], BUTTON_RELEASED);
   }
-    else {
-	d->print(dn);
-  }
-    
-  for (i = 0; i <= 14; i++) {
-    NumberPadBtn[i].setCornerRadius(3);
-  }
-  NumberPadBtn[0].draw();
-  NumberPadBtn[1].draw();
-  NumberPadBtn[2].draw();
-  NumberPadBtn[3].draw();
-  NumberPadBtn[4].draw();
-  NumberPadBtn[5].draw();
-  NumberPadBtn[6].draw();
-  NumberPadBtn[7].draw();
-  NumberPadBtn[8].draw();
-  NumberPadBtn[9].draw();
-  if (negstate) { NumberPadBtn[10].draw(); }
-  if (decstate) { NumberPadBtn[11].draw(); }
-  NumberPadBtn[12].draw();
-  NumberPadBtn[13].draw();
-  NumberPadBtn[14].draw();
   
   while (KeepIn) {
-	  
+
     if (t->touched()) {
-		
+
       ProcessTouch();
-      //go thru all the NumberPadBtn, checking if they were pressed
-      for (b = 0; b <= 14; b++) {
-		  	  
-        if (ProcessButtonPress(NumberPadBtn[b])) {
-		
+      for (b = 0; b < 15; b++) {
+
+        if (Pressed(&Buttons[b])) {
           //valid number
-          if ((b >= 0) & (b <= 9)) {
-            if (np > MAX_KEYBOARD_CHARS) { 
-			break; 
-			}
-			if ((dn[1] == '0') && (dn[2] != '.')) {
-			  dn[1] = b + '0';
-			  hc[1] = '*';
-			} else {
-			  dn[np] = b + '0';
-			  hc[np] = '*';
-			  np++;
-			}
-          } else if (b == 10) {
+          if (b <= 9) {
+            if (np > (MAX_KEYBOARD_CHARS-1)) {
+              break;
+            }
+            if ((dn[1] == '0') && (dn[2] != '.')) {
+
+              dn[1] = b + '0';
+              hc[1] = '*';
+            } else {
+
+              dn[np] = b + '0';
+              hc[np] = '*';
+              np++;
+            }
+          } else if (b == 11) {
             //negative number
             if (dn[0] == '-') {
               dn[0] = ' ';
             } else {
               dn[0] = '-';
             }
-          } else if (b == 11) {
+          } else if (b == 10) {
             // decimal point
             if (!hasDP) {
               dn[np] = '.';
-			  hc[np] = '*';
+              hc[np] = '*';
               hasDP = true;
               np++;
             }
           } else if (b == 12) {
             // back space
-            if (np > 1) {
+            if (np > 0) {
               --np;
               if (dn[np] == '.') { hasDP = false; }
               dn[np] = ' ';
-			  hc[np] = ' ';
+              hc[np] = ' ';
             }
-          } else if (b == 13) {
-            // done
 
-			TheNumber = atof(dn);
+          } else if (b == 13) {
+
+            // done
+            TheNumber = atof(dn);
             value = TheNumber;
             KeepIn = false;
-			break;
+            break;
           } else if (b == 14) {
-
             // cancel, just get the heck out
             KeepIn = false;
 
-			break;
+            break;
           }
         }
-        if (minmaxstate) {
+		
+	  }
+	if (minmaxstate) {
+	  TheNumber = atof(dn);
+	  // check min bounds
+	  if ((TheNumber < minval) || (TheNumber > maxval)){
+		  rangeOK = false;
+		  DrawButton(&Buttons[13], BUTTON_PRESSED);
+	  }
+	  else {
+		  rangeOK = true;
+		  DrawButton(&Buttons[13], BUTTON_RELEASED);
+	  }
+	}
+      
 
-          TheNumber = atof(dn);
-
-          // check min bounds
-          if ((TheNumber < minval) && (np > 0)){
-            // back out last entry
-            np--;
-            dn[np] = ' ';
-          }
-          // check max bounds
-          if (TheNumber > maxval) {
-            // back out last entry
-            np--;
-            dn[np] = ' ';
-          }
-        }
-      }
-	  d->fillRect(CW - (KW / 2) + BS, CH - KH / 2 + BS, 2 * BS + 3 * BW, TBH, inputb);
-	  d->setCursor(CW - (KW / 2) + BS + 5, CH - KH / 2 + BS + 5);
+      // text input box
+      d->fillRect(Col1, Row0, Col3 - Col1 + bWide, bHigh, inputb);
 	  d->setFont(bfont);
-	  d->setTextColor(inputt, inputb);
+      d->setTextColor(inputt, inputb);
+	  d->setCursor(Col1 + 5, Row0 + 10);
+      
 
-		if (hideinput){
-			d->print(hc);
-		}
-		else{
-			// Serial.print("439 "); Serial.println(dn);
-			d->print(dn);
-		}
+      if (hideinput) {
+        d->print(hc);
+      } else {
+        d->print(dn);
+      }
     }
+  }
+
+  // if no negative / shift chars
+  if (!negstate) {
+    for (i = 1; i < MAX_KEYBOARD_CHARS; i++) {
+      dn[i - 1] = dn[i];
+    }
+    dn[i] = '\0';
   }
   
 
 }
 
-void NumberPad::ProcessTouch() {
+void NumberPad::useButtonIcon(bool UseIcon) { 
+		useicon = UseIcon;
+	}
 
-	if (t->touched()){
-		p = t->getPoint();
-		BtnX = p.x;
-		BtnY = p.y;
-	
-#ifdef debug 
-	Serial.print("real coordinates:");
-    Serial.print(BtnX);
-    Serial.print(" ,");
-    Serial.print(BtnY);
-#endif 
+void NumberPad::BuildButton(BUTTON *temp, int Col, int Row, uint8_t Wide, uint8_t High, uint8_t ascii) {
+  temp->x = Col;
+  temp->y = Row;
+  temp->w = Wide;
+  temp->h = High;
+  temp->ascii = ascii;
+}
 
+void NumberPad::DrawButton(BUTTON *temp, uint8_t State) {
 
-    BtnX = map(BtnX, screenX0, screenX320, 0, 320);
-    BtnY = map(BtnY, screenY0, screenY240, 0, 240);
-		
-#ifdef debug 
-	Serial.print(" , Mapped coordinates:");
-    Serial.print(BtnX);
-    Serial.print(" ,");
-    Serial.println(BtnY);
-    d->fillCircle(BtnX, BtnY,2, ILI9341_RED);
-#endif
+	if (!decstate && (temp->ascii == 0x2E)){
+		return;
+	}
+
+	if (!negstate && (temp->ascii == 0x2D)){
+		return;
+	}
+  
+  
+  if (State == BUTTON_PRESSED) {
+    if (rad > 0) {
+      d->fillRoundRect(temp->x, temp->y, temp->w, temp->h, rad, pbcolor);
+    } else {
+      d->fillRect(temp->x, temp->y, temp->w, temp->h, pbcolor);
+    }
+    d->setTextColor(ptcolor, bcolor);
+  } else {
+    if (rad > 0) {
+      d->fillRoundRect(temp->x, temp->y, temp->w, temp->h, rad, bcolor);
+    } else {
+      d->fillRect(temp->x, temp->y, temp->w, temp->h, bcolor);
+    }
+    d->setTextColor(tcolor, bcolor);
   }
+  
+	 if (useicon){
+		 
+		if (temp->ascii == 0x00) {
+			drawMonoBitmap(temp->x+ 10,temp->y+5, backspace, 54, 30 , ILI9341_KEYPAD_BLUE);
+		} else if (temp->ascii == 0X01) {
+			drawMonoBitmap(temp->x+15, temp->y+20, check, 50, 50 , ILI9341_KEYPAD_GREEN);
+		} else if (temp->ascii == 0x02) {
+			drawMonoBitmap(temp->x+12, temp->y+20, cancel, 50, 50 , ILI9341_KEYPAD_RED);
+		}
+	 }
+	 else {
+	  d->setFont(bfont);
+	  if (temp->ascii == 0x00) {
+		d->setCursor(temp->x+ 10,temp->y+10);
+		d->print("Back");
+	  } else if (temp->ascii == 0X01) {
+		d->setCursor(temp->x+ 20,temp->y+50);
+		d->print("OK");
+	  } else if (temp->ascii == 0x02) {
+		d->setCursor(temp->x+ 3,temp->y+50);
+		d->print("Cancel");
+	  }
+	  }
+	  
+	const char text = temp->ascii;
+
+	uint16_t xx = d->measureTextWidth(&text)/2;
+	uint16_t yy = d->measureTextHeight(&text)/2;
+	
+	d->setCursor(temp->x +xx, temp->y + yy);
+	
+	d->print(text);	 
+	 
+}
+
+	void NumberPad::drawMonoBitmap(uint16_t x, uint16_t y, const unsigned char *bitmap, uint8_t w, uint8_t h, uint16_t color) {
+
+	  uint8_t sbyte = 0;
+	  uint8_t byteWidth = 0;
+	  uint16_t jj, ii;
+
+	  byteWidth = (w + 7) / 8;
+
+	  for (jj = 0; jj < h; jj++) {
+		for (ii = 0; ii < w; ii++) {
+		  if (ii & 7)  sbyte <<= 1;
+		  else sbyte   = pgm_read_byte(bitmap + jj * byteWidth + ii / 8);
+		  if (sbyte & 0x80) d->drawPixel(x + ii, y + jj, color);
+		}
+	  }
+	}
+
+bool NumberPad::Pressed(BUTTON *temp) {
+  bool found = false;
+  bool redraw = true;
+  bool redrawoff = false;
+
+
+	if (!decstate && (temp->ascii == 0x2E)){
+		return false;
+	}
+
+	if (!negstate && (temp->ascii == 0x2D)){
+		return false;
+	}
+
+	if (!rangeOK && (temp->ascii == 0x01)){
+		return false;
+	}
+
+  if ((BtnX > temp->x) && (BtnX < (temp->x + temp->w))) {
+    if ((BtnY > temp->y) && (BtnY < (temp->y + temp->h))) {
+delay(50);
+	if (clickpin > 0) {
+		//analogWrite(clickpin, 60);
+		//delay(5);
+		//analogWrite(clickpin, 0);
+	}
+
+
+      while (t->touched()) {
+
+        if (((BtnX > temp->x) && (BtnX < (temp->x + temp->w))) && ((BtnY > temp->y) && (BtnY < (temp->y + temp->h)))) {
+          if (redraw) {
+            DrawButton(temp, BUTTON_PRESSED);
+            redraw = false;
+            redrawoff = true;
+          }
+          found = true;
+        } else {
+          if (redrawoff) {
+            DrawButton(temp, BUTTON_RELEASED);
+            redrawoff = false;
+          }
+          found = false;
+          redraw = true;
+        }
+
+        ProcessTouch();
+      }
+
+      DrawButton(temp, BUTTON_RELEASED);
+      return found;
+    }
+  }
+  return false;
 }
 
 
-bool NumberPad::ProcessButtonPress(Button TheButton) {
-	if (TheButton.isEnabled() == false) {
-		return false;
-	}
-	
-  if (TheButton.press(BtnX, BtnY)) {
-    TheButton.draw(B_PRESSED);
-	Click();
-    while (t->touched()) {
-      if (TheButton.press(BtnX, BtnY)) {
-		  delay(50);
-        TheButton.draw(B_PRESSED);
-      } else {
-        TheButton.draw(B_RELEASED);
-        return false;
-      }
-      ProcessTouch();
-    }
-    TheButton.draw(B_RELEASED);
-    return true;
+void NumberPad::ProcessTouch() {
+  if (t->touched()) {
+
+    p = t->getPoint();
+    BtnX = p.x;
+    BtnY = p.y;
+
+#ifdef debug
+    Serial.print("real coordinates:");
+    Serial.print(BtnX);
+    Serial.print(" ,");
+    Serial.println(BtnY);
+#endif
+
+    //different displays may require reversing last 2 args
+    BtnX = map(BtnX, screenX0, screenX320, 320, 0);
+    BtnY = map(BtnY, screenY0, screenY240, 240, 0);
+    //d->fillCircle(BtnX, BtnY,2, 255);
+#ifdef debug
+    Serial.print(" , Mapped coordinates:");
+    Serial.print(BtnX);
+    Serial.print(" ,");
+    Serial.println(BtnY);
+#endif
   }
-  return false;
 }
 
 
