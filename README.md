@@ -1,11 +1,13 @@
 # Keyboard (numbers and characters) for Teensy MCU's
 
-Latest version 1.2
+Latest version 2.0
 <br>
 <b><h3>Version History</b></h3>
 1.0   2/12/2023      kasprzak      initial code
 <br>
 1.2   12/8/2024      kasprzak      added screen size option for contoling touch processing
+<br>
+2.00   6/30/2025      kasprzak     moved from Button Class to internal buttons (saves memory and is faster), added border control
 <br>
 
 NOTE: this library will work for Teensy processors, if you are using ESP or Arduino, use my Adafruit_ILI9341_KeyPad library. 
