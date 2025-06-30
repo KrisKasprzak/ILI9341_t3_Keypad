@@ -2,8 +2,8 @@
 #include "ILI9341_t3.h"  // high speed display that ships with Teensy
 #include "font_Arial.h"  // custom fonts that ships with ILI9341_t3.h
 #include <font_ArialBold.h>
-#include <ILI9341_t3_Keypad.h>
-#include <XPT2046_Touchscreen.h>
+#include <ILI9341_t3_Keypad.h> // must use
+#include <XPT2046_Touchscreen.h> // most use
 
 // For Teensy
 #define TFT_CS 10
@@ -23,32 +23,9 @@ ILI9341_t3 Display(TFT_CS, TFT_DC, TFT_RST);
 
 XPT2046_Touchscreen Touch(T_CS, T_IRQ);
 
-
 // create some keypad objects
 NumberPad MyNumberPad(&Display, &Touch);
 
-
-void CalibrateScreen() {
-  TS_Point p;
-  if (Touch.touched()) {
-    p = Touch.getPoint();
-    int BtnX = p.x;
-    int BtnY = p.y;
-    Serial.print("Coordinates: ");
-    Serial.print(BtnX);
-    Serial.print(" ,");
-    Serial.print(BtnY);
-
-    BtnX = map(BtnX, ScreenLeft, ScreenRight, 0, 320);
-    BtnY = map(BtnY, ScreenTop, ScreenBottom, 0, 240);
-
-    Serial.print(" - Mapped: ");
-    Serial.print(BtnX);
-    Serial.print(" ,");
-    Serial.println(BtnY);
-    Display.fillCircle(BtnX, BtnY, 2, 255);
-  }
-}
 void setup() {
 
   Serial.begin(9600);
@@ -60,7 +37,6 @@ void setup() {
 
   Touch.begin();
   Touch.setRotation(3);
-
 
   Display.fillScreen(ILI9341_BLACK);
   /*
@@ -95,4 +71,26 @@ void loop() {
   Serial.println(MyNumberPad.value);
   // reset if needed
   // MyNumberPad.value = 0;
+}
+
+void CalibrateScreen() {
+  TS_Point p;
+  if (Touch.touched()) {
+    p = Touch.getPoint();
+    int BtnX = p.x;
+    int BtnY = p.y;
+    Serial.print("Coordinates: ");
+    Serial.print(BtnX);
+    Serial.print(" ,");
+    Serial.print(BtnY);
+
+    BtnX = map(BtnX, ScreenLeft, ScreenRight, 0, 320);
+    BtnY = map(BtnY, ScreenTop, ScreenBottom, 0, 240);
+
+    Serial.print(" - Mapped: ");
+    Serial.print(BtnX);
+    Serial.print(" ,");
+    Serial.println(BtnY);
+    Display.fillCircle(BtnX, BtnY, 2, 255);
+  }
 }
