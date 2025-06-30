@@ -24,7 +24,7 @@
 	rev   date      author        change
 	1.0   2/12/2023      kasprzak      initial code
 	1.1   12/08/2024     kasprzak      added ability to set screen size for touch processing
-	2.0   6/2025     	kasprzak 		optimized keypad to reduce memory
+	2.0   6/2025     	kasprzak 		optimized keypad from button class to internal buttons to reduce memory
 
 */
 
@@ -45,7 +45,7 @@
 #endif
 
 #include <ILI9341_t3.h> 
-#include <ILI9341_t3_Controls.h> 	// button library
+// #include <ILI9341_t3_Controls.h> 	// button library
 #include <XPT2046_Touchscreen.h>
 
 #define BTNS 30
@@ -75,7 +75,7 @@
 #define	ILI9341_KEYPAD_GREEN   		0x07E0
 
 
-#define MAX_KEYBOARD_CHARS 6
+#define MAX_KEYBOARD_CHARS 18
 
 #define BUTTON_PRESSED 0
 #define BUTTON_RELEASED 1
@@ -88,7 +88,7 @@ public:
 
 	NumberPad(ILI9341_t3 *Display, XPT2046_Touchscreen *Touch);
 	
-	void init(uint16_t BackColor,uint16_t TextColor, uint16_t ButtonColor, 
+	void init(uint16_t BackColor,uint16_t TextColor, uint16_t ButtonColor, uint16_t BorderColor,
 	uint16_t PressedTextColor, uint16_t PressedButtonColor, uint16_t PressedBorderColor,
 	const ILI9341_t3_font_t &ButtonFont);
 	
@@ -183,7 +183,7 @@ private:
 	uint16_t bcolor;
 	uint16_t ptcolor, rcolor;
 	uint16_t pbcolor, btcolor;
-	uint16_t ptextcolor;
+	uint16_t brcolor;
 	int16_t inputb;
 	int16_t inputt;
 	uint8_t bHigh = 40, bWide = 40, digits = 2, rad = 0, numdec = 3;
@@ -209,7 +209,7 @@ private:
 	void DisplayInput();
 	void ProcessTouch();
 	void Click();	
-	bool ProcessButtonPress(Button TheButton);
+	//bool ProcessButtonPress(Button TheButton);
 	
 		// 'Check', 50x50px
 	const unsigned char check[350] = {
@@ -300,6 +300,10 @@ public:
 	
 	void setInitialText(const char *Text);
 	
+	void setClickPin(int Value);
+	
+	void setCornerRadius(uint8_t Radius);
+	
 	void setColors(
 		uint16_t BackColor, 
 		uint16_t TextColor, 
@@ -311,19 +315,48 @@ public:
 		);
 
 	 char data[MAX_KEYBOARD_CHARS+1];
+	 
+	 	void setTouchLimits(uint16_t ScreenLeft, uint16_t ScreenRight,uint16_t ScreenTop, uint16_t ScreenBottom);
+		
+	
+	void clearInput();
 
 private:
 
+	struct BUTTON{	
+		uint16_t x;
+		uint16_t y;
+		uint8_t w;
+	};
 	
 	ILI9341_t3 *d;
 	XPT2046_Touchscreen  *t;
 	TS_Point p;
+	
+	const int Row0 = 24 - 16;
+	const int Row1 = 54 - 8;
+	const int Row2 = 86 - 8;
+	const int Row3 = 118 - 8;
+	const int Row4 = 150 - 8;
+	const int Row5 = 182 - 8;
+	const int Row6 = 214 - 8;
+
+	const int Col1 = 17 - 12;
+	const int Col2 = 49 - 12;
+	const int Col3 = 81 - 12;
+	const int Col4 = 113 - 12;
+	const int Col5 = 145 - 12;
+	const int Col6 = 177 - 12;
+	const int Col7 = 209 - 12;
+	const int Col8 = 241 - 12;
+	const int Col9 = 273 - 12;
+	const int Col10 = 305 - 12;
 
 	void ProcessTouch();
-	char dn[MAX_KEYBOARD_CHARS+1];
-    char hc[MAX_KEYBOARD_CHARS+1];
-	char inittext[MAX_KEYBOARD_CHARS+1];  // display initial text
-	bool ProcessButtonPress(Button TheButton);
+	char dn[MAX_KEYBOARD_CHARS+2];
+    char hc[MAX_KEYBOARD_CHARS+2];
+	char inittext[MAX_KEYBOARD_CHARS+2];  // display initial text
+	//bool ProcessButtonPress(Button TheButton);
 	bool aclear = false;
 	bool hideinput = false;
 	bool hasinittext = false;
@@ -332,10 +365,23 @@ private:
 	uint16_t tcolor; 
 	uint16_t bcolor;
 	uint16_t rcolor;
-	uint16_t ptextcolor;
+	uint16_t pbcolor;
+	uint16_t ptcolor;
+	uint16_t brcolor;
 	int16_t inputb;
 	int16_t inputt;
+		uint8_t rad;
+		int8_t Size;
+		int8_t clickpin = -1;
+	int16_t screenX0, screenX320;
+	int16_t screenY0, screenY240;
 	ILI9341_t3_font_t bfont;
+	bool CapsLock = false;
+		void BuildButton(BUTTON *temp, int Col, int Row);
+	void BuildButton(BUTTON *temp, int Col, int Row, uint8_t Wide);
+	void DrawButton(BUTTON *temp, uint8_t ASCII, uint8_t State);
+	bool Pressed(BUTTON *temp, uint8_t ASCII);
+	void DisplayInput();
 
 };
 
