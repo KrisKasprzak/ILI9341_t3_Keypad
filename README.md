@@ -10,7 +10,8 @@ Latest version 2.0
 2.00   6/30/2025      kasprzak     moved from Button Class to internal buttons (saves memory and is faster), added border control
 <br>
 
-NOTE: this library will work for Teensy processors, if you are using ESP or Arduino, use my Adafruit_ILI9341_KeyPad library. 
+NOTE: this library will work for Teensy processors Tested with Teensy 3.2 and Teensy 4.0
+<br>If you are using ESP or Arduino, use my Adafruit_ILI9341_KeyPad library. 
 
 This library includes 2 classes for getting user input using a 0-9 digit number pad and a full keyboard. This library is for the ILI9341_t3 driver to drive common 2.8" LCF displays, and also requires touch screen capability.  This library is dependent on 
 <br>
