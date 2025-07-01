@@ -1,27 +1,32 @@
 // required libraries
-#include "ILI9341_t3.h"  // high speed display that ships with Teensy
-#include "font_Arial.h"  // custom fonts that ships with ILI9341_t3.h
-#include <font_ArialBold.h>
-#include <ILI9341_t3_Keypad.h> // must use
-#include <XPT2046_Touchscreen.h> // most use
+#include "Adafruit_ILI9341.h"
+#include "fonts\FreeSansBold12pt7b.h"
+#include "XPT2046_Touchscreen.h"
+#include "Adafruit_ILI9341_Keypad.h"
 
-// For Teensy
-#define TFT_CS 10
-#define TFT_DC 9
-#define TFT_RST 8
 #define T_CS 0
 #define T_IRQ 1
+#define TFT_DC 9
+#define TFT_CS 10
+#define TFT_RST 8
+#define PIN_LED 26
+
+#define C_BUTTON 0x2945
 
 // easy way to include fonts but change globally
-#define FONT_BUTTON Arial_16_Bold  // font for keypad buttons
+#define FONT_BUTTON FreeSansBold12pt7b  // font for keypad buttons
+
+int BtnX = 0, BtnY = 0;
+int i = 0;
 
 // you will probably need to calibrate your screen, these are coordinates of presses on display
-uint16_t ScreenLeft = 3700, ScreenRight = 260, ScreenTop = 3800, ScreenBottom = 240;
+uint16_t ScreenLeft = 350, ScreenRight = 3900, ScreenTop = 300, ScreenBottom = 3800;
 
 // you know the drill
-ILI9341_t3 Display(TFT_CS, TFT_DC, TFT_RST);
+Adafruit_ILI9341 Display = Adafruit_ILI9341(TFT_CS, TFT_DC, TFT_RST);
 
 XPT2046_Touchscreen Touch(T_CS, T_IRQ);
+TS_Point p;
 
 // create some keypad objects
 NumberPad MyNumberPad(&Display, &Touch);
@@ -33,32 +38,41 @@ void setup() {
   // fire up the display
   Display.begin();
 
-  Display.setRotation(3);
+  Display.setRotation(1);
 
   Touch.begin();
-  Touch.setRotation(3);
+  Touch.setRotation(1);
 
   Display.fillScreen(ILI9341_BLACK);
-  /*
+
+    /*
   while (1) {
 
     CalibrateScreen();
     delay(50);
   }
 */
-  MyNumberPad.init(ILI9341_BLACK, ILI9341_WHITE, ILI9341_BLUE, ILI9341_NAVY, ILI9341_DARKGREY, ILI9341_NAVY, ILI9341_BLACK, FONT_BUTTON);
-  MyNumberPad.setTouchLimits(ScreenRight, ScreenLeft, ScreenBottom, ScreenTop);
+
+
+  // initialize the numberpad object
+  // simulate a good old fashioned number input
+  // void init(uint16_t BackColor,uint16_t TextColor, uint16_t ButtonColor,
+  // uint16_t PressedTextColor, uint16_t PressedButtonColor,
+  // const GFXfont *ButtonFont);
+
+  MyNumberPad.init(ILI9341_BLACK, ILI9341_WHITE, C_BUTTON, ILI9341_DARKGREEN, ILI9341_BLACK, &FONT_BUTTON);
+  MyNumberPad.setTouchLimits(ScreenLeft, ScreenRight, ScreenTop, ScreenBottom);
 
   // optional methods
   MyNumberPad.setDisplayColor(ILI9341_CYAN, ILI9341_DARKGREY);
-  //MyNumberPad.useButtonIcon(true);  // want icons for action buttons? omit call or false for text.
-  MyNumberPad.enableDecimal(true);   // disable / enable decimal point (enabled by default)
-  MyNumberPad.enableNegative(true);  // disable / enable negative sign (enabled by default)
-  MyNumberPad.setCornerRadius(5);
-  MyNumberPad.setMinMax(3, 300);  // want bounds checks (disables OK button if out of range)?
-                                  // use the value property to set the initial value if desired
-  MyNumberPad.setInitialText("Height?");
-  MyNumberPad.value = 3.14159;  // set initial value
+  MyNumberPad.useButtonIcon(true); // want icons for action buttons? omit call or false for text.
+  MyNumberPad.enableDecimal();   // disable / enable decimal point (enabled by default)
+  MyNumberPad.enableNegative();  // disable / enable negative sign (enabled by default)
+  // MyNumberPad.setMinMax(3, 300); // want bounds checks (disables OK button if out of range)?
+  // MyNumberPad.setCornerRadius(5);
+  // MyNumberPad.setInitialText("Height?");  
+  // use the value property to set the initial value if desired
+  // MyNumberPad.value = 3.14159; // set initial value
   // MyNumberPad.hideInput();
 }
 
@@ -69,8 +83,6 @@ void loop() {
 
   Serial.print("Entered value ");
   Serial.println(MyNumberPad.value);
-  // reset if needed
-  // MyNumberPad.value = 0;
 }
 
 void CalibrateScreen() {
