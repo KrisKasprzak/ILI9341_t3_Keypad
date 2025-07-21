@@ -22,16 +22,17 @@
   and make millions of dollars, I'm happy for you!
 
 	rev   date      author        change
-	1.0   2/12/2023      kasprzak      initial code
-	1.1   12/08/2024     kasprzak      added ability to set screen size for touch processing
-	2.0   6/2025     	kasprzak 		optimized keypad from button class to internal buttons to reduce memory
+	1.0   2/12/2023     	kasprzak      	initial code
+	1.1   12/08/2024     	kasprzak      	added ability to set screen size for touch processing
+	2.0   6/2025		kasprzak 	optimized keypad from button class to internal buttons to reduce memory
+ 	2.0   7/2025     	kasprzak 	improved text centering and implemented ability to set numpad center and button sizes
 
 */
 
 #ifndef ILI9341_KEYPAD_H
 #define ILI9341_KEYPAD_H
 
-#define ILI9341_KEYPAD_VER 2.0
+#define ILI9341_KEYPAD_VER 2.1
 
 #if ARDUINO >= 100
 	 #include "Arduino.h"
@@ -74,13 +75,10 @@
 #define	ILI9341_KEYPAD_RED     		0xF800
 #define	ILI9341_KEYPAD_GREEN   		0x07E0
 
-
 #define MAX_KEYBOARD_CHARS 18
 
 #define BUTTON_PRESSED 0
 #define BUTTON_RELEASED 1
-
-
 
 class  NumberPad {
 		
@@ -96,7 +94,7 @@ public:
 	
 	void setLocation(uint16_t CenterWidth, uint16_t CenterHeight);
 	
-	void setButtonSizes(uint16_t ButtonWidth, uint16_t ButtonHeight, uint16_t Margins, uint16_t OKButtonWidth, uint16_t OKButtonHeight);
+	void setButtonSizes(uint16_t ButtonWidth, uint16_t ButtonHeight, uint16_t Margins);
 	
 	void enableDecimal(bool State);
 	
@@ -155,16 +153,16 @@ private:
 		uint8_t ascii;
 	};
 	
-	const int Row0 = 10;
-	const int Row1 = 50+5;
-	const int Row2 = 90+10;
-	const int Row3 = 130+15;
-	const int Row4 = 170+20;
+	int Row0 = 10;
+	int Row1 = 50+5;
+	int Row2 = 90+10;
+	int Row3 = 130+15;
+	int Row4 = 170+20;
 	bool useicon = false;
-	const int Col1 = 50;
-	const int Col2 = 90+5;
-	const int Col3 = 130+10;
-	const int Col4 = 170+15;
+	int Col1 = 50;
+	int Col2 = 90+5;
+	int Col3 = 130+10;
+	int Col4 = 170+15;
 	
 	uint16_t CW = 160;  // width center of screen
 	uint16_t CH = 120;  // height center of screen
@@ -172,8 +170,11 @@ private:
 	uint16_t BW = 60;
 	uint16_t BS = 5;
 	uint16_t TBH = 30;
-	uint16_t OKBW = 70;
-	uint16_t OKBH = 70;
+	uint16_t width = 0;
+	uint16_t height =0;	
+	uint16_t left = 0;
+	uint16_t top = 0;
+	uint8_t xm = 0, ym = 0;
 	char inittext[MAX_KEYBOARD_CHARS+2];  // display initial text
 	char hc[MAX_KEYBOARD_CHARS+2];
 	char dn[MAX_KEYBOARD_CHARS+2];  // display number
@@ -209,6 +210,7 @@ private:
 	void DisplayInput();
 	void ProcessTouch();
 	void Click();	
+	void ComputeGrid();
 	//bool ProcessButtonPress(Button TheButton);
 	
 		// 'Check', 50x50px
