@@ -25,7 +25,7 @@
 	1.0   2/12/2023     	kasprzak      	initial code
 	1.1   12/08/2024     	kasprzak      	added ability to set screen size for touch processing
 	2.0   6/2025		kasprzak 	optimized keypad from button class to internal buttons to reduce memory
- 	2.0   7/2025     	kasprzak 	improved text centering and implemented ability to set numpad center and button sizes
+ 	2.1   7/2025     	kasprzak 	improved text centering and implemented ability to set numpad center and button sizes
 
 */
 
