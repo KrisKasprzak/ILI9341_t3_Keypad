@@ -3,11 +3,12 @@
 Latest version 2.0
 <br>
 <b><h3>Version History</b></h3>
-1.0   2/12/2023      kasprzak      initial code
+1.0   2/12/2023   kasprzak  initial code
 <br>
-1.2   12/8/2024      kasprzak      added screen size option for contoling touch processing
+1.2   12/8/2024   kasprzak  added screen size option for contoling touch processing
 <br>
-2.00   6/30/2025      kasprzak     moved from Button Class to internal buttons (saves memory and is faster), added border control
+2.0   6/30/2025   kasprzak  moved from Button Class to internal buttons (saves memory and is faster), added border control
+2.1   7/2025     	kasprzak 	improved text centering and implemented ability to set numpad center and button sizes
 <br>
 
 NOTE: this library will work for Teensy processors Tested with Teensy 3.2 and Teensy 4.0
