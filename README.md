@@ -8,6 +8,7 @@ Latest version 2.0
 1.2   12/8/2024   kasprzak  added screen size option for contoling touch processing
 <br>
 2.0   6/30/2025   kasprzak  moved from Button Class to internal buttons (saves memory and is faster), added border control
+<br>
 2.1   7/2025     	kasprzak 	improved text centering and implemented ability to set numpad center and button sizes
 <br>
 
