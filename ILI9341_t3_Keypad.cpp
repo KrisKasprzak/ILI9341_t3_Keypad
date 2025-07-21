@@ -426,13 +426,6 @@ void NumberPad::DrawButton(BUTTON *temp, uint8_t State) {
 			//d->setCursor(temp->x + xm, temp->y + ym);
 			d->print((char) temp->ascii);	 
 			
-			Serial.println((char)temp->ascii);
-			Serial.println(temp->x);
-			Serial.println(temp->w);
-			Serial.println(xm);
-			Serial.println(temp->h );
-			Serial.println(ym);
-			
 		}
 	  }
 	  	 
@@ -620,32 +613,41 @@ void Keyboard::DrawButton(BUTTON *temp, uint8_t ASCII, uint8_t State) {
   
   d->setFont(bfont);
   
-  d->setCursor(temp->x + 7, temp->y + 6);
-  
-
-  if (ASCII == 168) {
-    d->print("Space");
+  if (ASCII == 168) {	  
+	xm = d->measureTextWidth("Space");	 // returns inconsistent values	
+	ym = d->measureTextHeight("Space");
+	d->setCursor(temp->x + ((4*Size) - xm)/2,temp->y+(Size - ym)/2);
+	d->print("Space");
   } else if (ASCII == 169) {
-    d->print("Done");
+	xm = d->measureTextWidth("Done");	 // returns inconsistent values	
+	ym = d->measureTextHeight("Done");
+	d->setCursor(temp->x + ((3*Size) - xm)/2,temp->y+(Size - ym)/2);
+	d->print("Done");
   } else if (ASCII == 170) {
-    d->print("Cancel");
+	xm = d->measureTextWidth("Cancel");	 // returns inconsistent values	
+	ym = d->measureTextHeight("Cancel");
+	d->setCursor(temp->x + ((4*Size) - xm)/2,temp->y+(Size - ym)/2);
+	d->print("Cancel");
   } else if (ASCII == 171) {
-    d->print("Back");
+	xm = d->measureTextWidth("Back");	 // returns inconsistent values	
+	ym = d->measureTextHeight("Back");
+	d->setCursor(temp->x + ((3*Size) - xm)/2,temp->y+(Size - ym)/2);
+	d->print("Back");
   } else if (ASCII == 172) {
-    d->print("Aa");
+	xm = d->measureTextWidth("Aa");	 // returns inconsistent values	
+	ym = d->measureTextHeight("Aa");
+	d->setCursor(temp->x + ((3*Size) - xm)/2,temp->y+(Size - ym)/2);
+	d->print("Aa");
   } else if (ASCII == 173) {
-    d->print("#$%^");
+	xm = d->measureTextWidth("#$%^");	 // returns inconsistent values	
+	ym = d->measureTextHeight("#$%^");
+	d->setCursor(temp->x + ((3*Size) - xm)/2,temp->y+(Size - ym)/2);
+	d->print("#$%^");
   } else {
-	  
-	const char text = (char)ASCII;
-	uint16_t xx = d->measureTextWidth(&text)/2;	 // returns inconsistent values	
-	uint16_t yy = d->measureTextHeight(&text)/2;
-	xx = 8;
-	//yy=6;
-	d->setCursor(temp->x + xx, temp->y + yy);
-	d->print(text);	
-			
-    // d->print((char)ASCII);
+	xm = d->measureTextWidth("0");	 // returns inconsistent values	
+	ym = d->measureTextHeight("0");
+	d->setCursor(temp->x + (Size - xm)/2,temp->y+(Size - ym)/2);
+	d->print((char) ASCII);	
   }
 }
 
@@ -692,11 +694,12 @@ bool Keyboard::Pressed(BUTTON *temp, uint8_t ASCII) {
 
 void Keyboard::DisplayInput() {
 
+	ym = d->measureTextHeight("A");
 
-  d->fillRect(Col1, Row0, Col10 + (2 * 9), Size, inputt);
-  d->setCursor(Col1 + 5, Row0 + 6);
-  d->setFont(bfont);
-  d->setTextColor(inputb, inputt);
+	d->fillRect(Col1, Row0, Col10 + (2 * 9), Size, inputt);
+	d->setCursor(Col1 + 5, Row0 + +(Size - ym)/2);
+	d->setFont(bfont);
+	d->setTextColor(inputb, inputt);
 
   if (hideinput) {
 	d->print(hc);
