@@ -53,7 +53,9 @@ void NumberPad::init(uint16_t BackColor, uint16_t TextColor, uint16_t ButtonColo
 	rad = 0;
 	numdec = 3;
 	clickpin = -1;
-   
+	CW = d->width()/2;	      
+	CH = d->height()/2;
+    ComputeGrid();
   // in this class we are NOT initially writing to the char[0] as it's reserved for the - sign
   // hence we need to populate it to eliminate null terminator
 
@@ -81,15 +83,17 @@ void NumberPad::setDisplayColor(uint16_t TextColor, uint16_t BackColor) {
 void NumberPad::setLocation(uint16_t CenterWidth, uint16_t CenterHeight) {
   CW = CenterWidth;   // width center of screen
   CH = CenterHeight;  // height center of screen
+  ComputeGrid();
 }
 
-void NumberPad::setButtonSizes(uint16_t ButtonWidth, uint16_t ButtonHeight, uint16_t Margins, uint16_t OKButtonWidth, uint16_t OKButtonHeight) {
+void NumberPad::setButtonSizes(uint16_t ButtonWidth, uint16_t ButtonHeight, uint16_t Margins) {
 
   BW = ButtonWidth;
   BH = ButtonHeight;
   BS = Margins;
-  OKBW = OKButtonWidth;
-  OKBH = OKButtonHeight;
+  
+  ComputeGrid();
+
 }
 
 void NumberPad::enableDecimal(bool State ) {
@@ -123,13 +127,11 @@ void NumberPad::setInitialText(const char *Text) {
 
   uint8_t i;
 
-
   for (i = 0; i < (MAX_KEYBOARD_CHARS); i++) {
     inittext[i] = Text[i];
   }
-  hasinittext = true;
   
-
+  hasinittext = true;
   
 }
 
@@ -148,6 +150,29 @@ void NumberPad::setClickPin(int Value) {
 
 clickpin = Value;
 
+}
+
+void NumberPad::ComputeGrid(){
+	
+	// get overall box w, h
+	
+	width = (bWide * 5) + (BS * 6);
+	height = (bHigh * 5) + (BS * 6);
+	
+	left = CW - (width / 2);
+	top = CH - (height / 2);
+
+	Row0 = top + BS;
+	Row1 = Row0 + bHigh + BS;
+	Row2 = Row1 + bHigh + BS;
+	Row3 = Row2 + bHigh + BS;;
+	Row4 = Row3 + bHigh + BS;; 
+	
+	Col1 = left + BS;
+	Col2 = Col1 + bWide + BS;
+	Col3 = Col2 + bWide + BS;
+	Col4 = Col3 + bWide + BS;	
+	
 }
 
 void NumberPad::getInput() {
@@ -195,7 +220,7 @@ void NumberPad::getInput() {
   BuildButton(&Buttons[14], Col4, Row3, bWide * 2, (bHigh * 2) + 5, 0x02);  // cancel
 
   // large background box
-  d->fillRect(Col1 - 5, Row0 - 5, Col4 - Col1 + Buttons[13].w + 10, Row4 - Row0 + bHigh + 10, kcolor);
+  d->fillRect(left, top, width, height, kcolor);
 
   // text input box
   d->fillRect(Col1, Row0, Col3 - Col1 + bWide, bHigh, inputb);
@@ -298,8 +323,10 @@ void NumberPad::getInput() {
       d->fillRect(Col1, Row0, Col3 - Col1 + bWide, bHigh, inputb);
 	  d->setFont(bfont);
       d->setTextColor(inputt, inputb);
-	  d->setCursor(Col1 + 5, Row0 + 10);
-      
+	  
+	  ym = d->measureTextHeight("0");	  
+	  
+	  d->setCursor(Col1 + (bHigh - ym)/2, Row0 + 10);      
 
       if (hideinput) {
         d->print(hc);
@@ -375,25 +402,37 @@ void NumberPad::DrawButton(BUTTON *temp, uint8_t State) {
 	 else {
 		d->setFont(bfont);
 		
-		if (temp->ascii == 0x00) {
-			d->setCursor(temp->x+ 10,temp->y+10);
+		if (temp->ascii == 0x00) {			
+			xm = d->measureTextWidth("Back");	 // returns inconsistent values	
+			ym = d->measureTextHeight("Back");					
+			d->setCursor(temp->x + (temp->w - xm)/2,temp->y+(temp->h - ym)/2);
 			d->print("Back");
 		} else if (temp->ascii == 0X01) {
-			d->setCursor(temp->x+ 20,temp->y+50);
+			xm = d->measureTextWidth("OK");	 // returns inconsistent values	
+			ym = d->measureTextHeight("OK");					
+			d->setCursor(temp->x + (temp->w - xm)/2,temp->y+(temp->h - ym)/2);
 			d->print("OK");
 		} else if (temp->ascii == 0x02) {
-			d->setCursor(temp->x+ 3,temp->y+50);
+			xm = d->measureTextWidth("Cancel");	 // returns inconsistent values	
+			ym = d->measureTextHeight("Cancel");					
+			d->setCursor(temp->x + (temp->w - xm)/2,temp->y+(temp->h - ym)/2);
 			d->print("Cancel");
 		}
 		else {
+
+			xm = d->measureTextWidth("0");	 // returns inconsistent values	
+			ym = d->measureTextHeight("0");
+			d->setCursor(temp->x + (temp->w - xm)/2,temp->y+(temp->h - ym)/2);
+			//d->setCursor(temp->x + xm, temp->y + ym);
+			d->print((char) temp->ascii);	 
 			
-			const char text = temp->ascii;
-			uint16_t xx = d->measureTextWidth(&text)/1;	 // returns inconsistent values	
-			uint16_t yy = d->measureTextHeight(&text)/1;
-			xx = 15;
-			//yy=10;
-			d->setCursor(temp->x + xx, temp->y + yy);
-			d->print(text);	 
+			Serial.println((char)temp->ascii);
+			Serial.println(temp->x);
+			Serial.println(temp->w);
+			Serial.println(xm);
+			Serial.println(temp->h );
+			Serial.println(ym);
+			
 		}
 	  }
 	  	 
