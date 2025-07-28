@@ -353,7 +353,7 @@ private:
 	const int Col8 = 241 - 12;
 	const int Col9 = 273 - 12;
 	const int Col10 = 305 - 12;
-uint8_t xm = 0, ym = 0;
+	uint8_t xm = 0, ym = 0;
 	void ProcessTouch();
 	char dn[MAX_KEYBOARD_CHARS+2];
     char hc[MAX_KEYBOARD_CHARS+2];
@@ -386,8 +386,5 @@ uint8_t xm = 0, ym = 0;
 	void DisplayInput();
 
 };
-
-
-
 
 #endif
