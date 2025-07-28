@@ -520,8 +520,8 @@ void NumberPad::ProcessTouch() {
 #endif
 
     //different displays may require reversing last 2 args
-    BtnX = map(BtnX, screenX0, screenX320, 320, 0);
-    BtnY = map(BtnY, screenY0, screenY240, 240, 0);
+    BtnX = map(BtnX, screenX0, screenX320, 0, 320);
+    BtnY = map(BtnY, screenY0, screenY240,0, 240);
     //d->fillCircle(BtnX, BtnY,2, 255);
 #ifdef debug
     Serial.print(" , Mapped coordinates:");
@@ -1105,20 +1105,22 @@ void Keyboard::ProcessTouch() {
      Serial.print (BtnY);
 #endif
 
-    // different displays may require reversing last 2 args
-    //BtnX = map(p.x, 3975, 169, 0, 320);
-   //BtnY = map(p.y, 3850, 304, 0, 240);
-	
-    BtnX = map(BtnX, screenX0, screenX320, 320, 0);
-    BtnY = map(BtnY, screenY0, screenY240, 240, 0);
+
+//	  screenX0 = ScreenLeft;
+//  screenX320 = ScreenRight;
+//  screenY0 = ScreenTop;
+//  screenY240 = ScreenBottom;
+  
+    BtnX = map(BtnX, screenX0, screenX320, 0, 320);
+    BtnY = map(BtnY, screenY0, screenY240, 0, 240);
 	
 
-#ifdef debug
+//#ifdef debug
      Serial.print(" , Mapped coordinates:");
      Serial.print(BtnX);
      Serial.print(" ,");
      Serial.println(BtnY);
     d->fillCircle(BtnX, BtnY, 2, ILI9341_RED);
-#endif
+//#endif
   }
 }
